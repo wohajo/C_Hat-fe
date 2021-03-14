@@ -8,7 +8,21 @@ export default function Home() {
         <title>C_Hat</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <h1>Welcome to C_Hat</h1>
+        <h1>Welcome to C_Hat</h1>
+        <div className={styles.loginBox}>
+          <div className={styles.loginLabel}>
+            Login
+          </div>
+          <div className={styles.passwordLabel}>
+            Password
+          </div>
+          <div className={styles.login}>
+            <input type="text"/>
+            </div>
+          <div className={styles.password}>
+            <input type="password"/>
+            </div>
+        </div>
     </div>
   )
 }

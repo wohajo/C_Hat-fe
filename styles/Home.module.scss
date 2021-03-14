@@ -6,3 +6,33 @@
   justify-content: center;
   align-items: center;
 }
+
+.loginBox {
+  display: grid;
+  text-align: center;
+  grid-template-columns: 0.8fr 1.2fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 10px 0px;
+  grid-template-areas:
+      "login-label login"
+      "password-label password";
+
+  input {
+    padding: 2%;
+    border-radius: 10px;
+    border: 2px solid black;
+    transition: linear 0.2s;
+  }
+  
+  input:focus, input:hover {
+    border: 2px solid darkviolet;
+  }
+}
+
+.passwordLabel { grid-area: password-label; }
+
+.loginLabel { grid-area: login-label; }
+
+.login { grid-area: login; }
+
+.password { grid-area: password; }
