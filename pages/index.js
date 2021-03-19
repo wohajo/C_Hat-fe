@@ -9,20 +9,15 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
         <h1>Welcome to C_Hat</h1>
-        <div className={styles.loginBox}>
-          <div className={styles.loginLabel}>
-            Login
-          </div>
-          <div className={styles.passwordLabel}>
-            Password
-          </div>
+        <div className={styles.credentialsBox}>
           <div className={styles.login}>
-            <input type="text"/>
+            <input type="text" placeholder="Username"/>
             </div>
           <div className={styles.password}>
-            <input type="password"/>
+            <input type="password" placeholder="Password"/>
             </div>
         </div>
+        <a href="/register" id={styles.registerButton}>Need an account? Register here!</a>
     </div>
   )
 }

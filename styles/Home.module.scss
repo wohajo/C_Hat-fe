@@ -7,26 +7,33 @@
   align-items: center;
 }
 
-.loginBox {
-  display: grid;
-  text-align: center;
-  grid-template-columns: 0.8fr 1.2fr;
-  grid-template-rows: 1fr 1fr;
-  gap: 10px 0px;
-  grid-template-areas:
-      "login-label login"
-      "password-label password";
+.credentialsBox {
+  display: flex;
+  flex-direction: column;
+}
 
-  input {
+.credentialsBox input {
     padding: 2%;
-    border-radius: 10px;
-    border: 2px solid black;
+    width: 40vw;
+    border: none;
+    border-bottom: 2px solid black;
     transition: linear 0.2s;
-  }
-  
-  input:focus, input:hover {
-    border: 2px solid darkviolet;
-  }
+    margin-bottom: 15px;
+}
+
+.credentialsBox input:focus, .credentialsBox input:hover {
+  border-bottom: 2px solid darkviolet;
+}
+
+#registerButton {
+  color: darkviolet;
+  font-size: x-small;
+}
+
+@media only screen and (max-width: 600px) {
+  .credentialsBox input {
+    width: 70vw;
+}
 }
 
 .passwordLabel { grid-area: password-label; }
