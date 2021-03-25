@@ -17,6 +17,7 @@ export default function Home() {
             <input type="text" placeholder="Confirm email"/>
             <input type="text" placeholder="Password"/>
             <input type="text" placeholder="Confirm password"/>
+            <button className={styles.credentialsBoxButton}>Register</button>
         </div>
     </div>
   )

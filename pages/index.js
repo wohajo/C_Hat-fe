@@ -15,9 +15,10 @@ export default function Home() {
             </div>
           <div className={styles.password}>
             <input type="password" placeholder="Password"/>
-            </div>
+          </div>
+          <button className={styles.credentialsBoxButton}>Log in</button>
         </div>
-        <a href="/register" id={styles.registerButton}>Need an account? Register here!</a>
+        <a href="/register" id={styles.goToRegisterButton}>Need an account? Register here!</a>
     </div>
   )
 }

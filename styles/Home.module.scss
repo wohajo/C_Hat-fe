@@ -10,6 +10,7 @@
 .credentialsBox {
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
 .credentialsBox input {
@@ -22,18 +23,35 @@
 }
 
 .credentialsBox input:focus, .credentialsBox input:hover {
-  border-bottom: 2px solid darkviolet;
+  border-bottom: 2px solid darkviolet; 
 }
 
-#registerButton {
+#goToRegisterButton {
   color: darkviolet;
   font-size: x-small;
+}
+
+.credentialsBoxButton {
+  width: 10vw;
+  background-color: darkviolet;
+  border: none;
+  padding: 5px;
+  color: white;
+  margin-bottom: 5px;
+}
+
+.credentialsBoxButton:hover {
+  background-color: rgb(157, 0, 224);
+  cursor: pointer;
 }
 
 @media only screen and (max-width: 600px) {
   .credentialsBox input {
     width: 70vw;
-}
+  }
+  .credentialsBoxButton {
+    width: 20vw;
+  }
 }
 
 .passwordLabel { grid-area: password-label; }
