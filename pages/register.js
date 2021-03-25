@@ -4,18 +4,21 @@ import axios from 'axios'
 
 export default function Register() {
 
-  const handleRegister = () => {
+  const handleRegister = async event => {
+    event.preventDefault()
+
     fetch('/api/users/register', {
       method: 'POST',
       headers: {
+        'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        firstName: target.firstName.value,
-        lastName: target.lastName.value,
-        username: target.username.value,
-        password: target.password.value,
-        email: target.email.value
+        firstName: event.target.firstName.value,
+        lastName: event.target.lastName.value,
+        username: event.target.username.value,
+        password: event.target.password.value,
+        email: event.target.email.value
       })
     })
   };
