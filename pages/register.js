@@ -1,7 +1,25 @@
 import Head from 'next/head'
 import styles from '../styles/Home.module.scss'
+import axios from 'axios'
 
-export default function Home() {
+export default function Register() {
+
+  const handleRegister = () => {
+    fetch('/api/users/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        firstName: target.firstName.value,
+        lastName: target.lastName.value,
+        username: target.username.value,
+        password: target.password.value,
+        email: target.email.value
+      })
+    })
+  };
+
   return (
     <div className={styles.container}>
       <Head>
@@ -9,16 +27,16 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
         <h1>Register to C_Hat</h1>
-        <div className={styles.credentialsBox}>
-            <input type="text" placeholder="First name"/>
-            <input type="text" placeholder="Last name"/>
-            <input type="text" placeholder="Username"/>
-            <input type="text" placeholder="Email"/>
-            <input type="text" placeholder="Confirm email"/>
-            <input type="text" placeholder="Password"/>
-            <input type="text" placeholder="Confirm password"/>
-            <button className={styles.credentialsBoxButton}>Register</button>
-        </div>
+        <form onSubmit={handleRegister} className={styles.credentialsBox}>
+            <input type="text" id="firstName" name="firstName" placeholder="First name" required/>
+            <input type="text" id="lastName" name="lastName" placeholder="Last name" required/>
+            <input type="text" id="username" name="username" placeholder="Username" required/>
+            <input type="text" id="email" name="email" placeholder="Email" required/>
+            <input type="text" placeholder="Confirm email" required/>
+            <input type="password" id="password" name="password" placeholder="Password" required/>
+            <input type="password" placeholder="Confirm password" required/>
+            <button className={styles.credentialsBoxButton} type="submit">Register</button>
+        </form>
     </div>
   )
 }
