@@ -5,21 +5,30 @@ import axios from 'axios'
 export default function Register() {
 
   const handleRegister = async event => {
-    event.preventDefault()
-
-    fetch('/api/users/register', {
-      method: 'POST',
+    var postData = JSON.stringify({
+      firstName: event.target.firstName.value,
+      lastName: event.target.lastName.value,
+      username: event.target.username.value,
+      password: event.target.password.value,
+      email: event.target.email.value
+    })
+  
+    let axiosConfig = {
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        firstName: event.target.firstName.value,
-        lastName: event.target.lastName.value,
-        username: event.target.username.value,
-        password: event.target.password.value,
-        email: event.target.email.value
-      })
+          'Content-Type': 'application/json;charset=UTF-8',
+          "Access-Control-Allow-Origin": "*",
+      }
+    };
+  
+    event.preventDefault()
+    axios.post('http://localhost:8081/api/users/register', postData, axiosConfig)
+    .catch((err) => {
+      console.log("--error in local--")
+
+    })
+    .then((res) => {
+      console.log("--OK--")
+      console.log(res) //prints data
     })
   };
 

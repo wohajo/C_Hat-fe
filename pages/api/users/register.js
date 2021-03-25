@@ -23,21 +23,23 @@ export default function userHandler(req, res) {
     },
     method,
   } = req
+  
+  // TODO catch errors
 
   switch (method) {
-
-    // fetch('http://localhost:8081/api/users/register', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Accept': 'application/json',
-    //     'Content-Type': 'application/json'
-    //   },
-    //   body: req.query,
-    // })
-
     case 'POST':
       axios
-      .post('http://localhost:8081/api/users/register', postData, axiosConfig)
+      .post('http://localhost:8081/api/users/register', req.body, axiosConfig)
+      .catch((err) => {
+        console.log("--error in sending--")
+        res.status(err.status)
+        res.end()
+      })
+      .then((res) => {
+        console.log("--OK--")
+        res.status(200)
+        res.end()
+      })
       break
     default:
       res.setHeader('Allow', ['POST'])
