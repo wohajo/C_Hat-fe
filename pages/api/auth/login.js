@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export default function userHandler(req, res) {
+export default function authHandler(req, res) {
 
   let axiosConfig = {
     headers: {
@@ -11,11 +11,8 @@ export default function userHandler(req, res) {
 
   const {
     query: {     
-    firstName,
-    lastName,
     username,
-    password,
-    email 
+    password
     },
     method,
   } = req
@@ -25,14 +22,14 @@ export default function userHandler(req, res) {
   switch (method) {
     case 'POST':
       axios
-      .post('http://localhost:8081/api/users/register', req.body, axiosConfig)
+      .post('http://localhost:8081/api/auth/login', req.body, axiosConfig)
       .then((res) => {
-        console.log("--OK in sending--")
+        console.log("--OK in api--")
         res.status(200)
         res.end()
       })
       .catch((err) => {
-        console.log("--error in sending--")
+        console.log("--error in api--")
         res.status(err.response.data.status)
         res.end()
       })

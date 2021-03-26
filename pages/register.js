@@ -22,13 +22,14 @@ export default function Register() {
   
     event.preventDefault()
     axios.post('http://localhost:8081/api/users/register', postData, axiosConfig)
-    .catch((err) => {
-      console.log("--error in local--")
-
-    })
     .then((res) => {
-      console.log("--OK--")
-      console.log(res) //prints data
+      console.log(res.status)
+      console.log(res.data)
+    })
+    .catch((err) => {
+      console.log(err.response.data.status)
+      console.log(err.response.data.message)
+      alert(err.response.data.message)
     })
   };
 
