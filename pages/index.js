@@ -1,33 +1,26 @@
 import Head from 'next/head'
+import { useState } from 'react'
+import { signIn } from 'next-auth/client'
 import styles from '../styles/Home.module.scss'
-import axios from 'axios'
 
 export default function Home() {
 
-  const handleLogin = async event => {
-    var postData = JSON.stringify({
-      username: event.target.username.value,
-      password: event.target.password.value
-    })
-  
-    let axiosConfig = {
-      headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+
+  const handleLogin = () => {
+    signIn('credentials',
+      {
+        username,
+        password,
+        // The page where you want to redirect to after a 
+        // successful login
+        callbackUrl: `${window.location.origin}/welcome` 
       }
-    };
-  
-    event.preventDefault()
-    axios.post('http://localhost:8081/api/auth/login', postData, axiosConfig)
-    .then((res) => {
-      console.log(res.status)
-      console.log(res.data)
-    })
-    .catch((err) => {
-      console.log(err.response.data.status)
-      console.log(err.response.data.message)
-      alert(err.response.data.message)
-    })
-  };
+    )
+  }
+      // username: event.target.username.value,
+      // password: event.target.password.value
 
   return (
     <div className={styles.container}>
@@ -37,8 +30,8 @@ export default function Home() {
       </Head>
         <h1>Welcome to C_Hat</h1>
         <form onSubmit={handleLogin} className={styles.credentialsBox}>
-          <input type="text" id="username" name="username" placeholder="Username" required/>
-          <input type="password" id="password" name="password" placeholder="Password" required/>
+          <input type="text" id="username" name="username" placeholder="Username" onChange={(e) => setUsername(e.target.value)} required/>
+          <input type="password" id="password" name="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} required/>
           <button type="submit" className={styles.credentialsBoxButton}>Log in</button>
         </form>
         <a href="/register" id={styles.goToRegisterButton}>Need an account? Register here!</a>

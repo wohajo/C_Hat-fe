@@ -19,8 +19,6 @@ export default function userHandler(req, res) {
     },
     method,
   } = req
-  
-  // TODO catch errors
 
   switch (method) {
     case 'POST':
