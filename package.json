@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "format": "prettier --write \"**/*.+(js|json|scss|html)\""
   },
   "dependencies": {
     "axios": "^0.21.1",
@@ -15,5 +16,8 @@
     "react": "17.0.1",
     "react-dom": "17.0.1",
     "sass": "^1.32.8"
+  },
+  "devDependencies": {
+    "prettier": "2.2.1"
   }
 }

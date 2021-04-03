@@ -4,14 +4,15 @@ import axios from 'axios'
 
 const providers = [
   Providers.Credentials({
-    name: 'Credentials',
+    name: 'credentials',
     authorize: async (credentials) => {
+      console.log("provider")
       try {
-        const user = await axios.post(`localhost:8081/api/auth/login`,
+        const user = await axios.post("localhost:8081/api/auth/login",
         {
           user: {
-            password: credentials.password,
-            email: credentials.email
+            username: credentials.username,
+            password: credentials.password
           }
         },
         {
@@ -29,9 +30,8 @@ const providers = [
       } catch (e) {
         const errorMessage = e.response.data.message
         // Redirecting to the login page with error messsage in the URL
-        throw new Error(errorMessage + '&email=' + credentials.email)
+        throw new Error(errorMessage + '&email=' + credentials.username)
       }
-
     }
   })
 ]

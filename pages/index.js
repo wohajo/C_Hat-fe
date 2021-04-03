@@ -19,8 +19,6 @@ export default function Home() {
       }
     )
   }
-      // username: event.target.username.value,
-      // password: event.target.password.value
 
   return (
     <div className={styles.container}>
