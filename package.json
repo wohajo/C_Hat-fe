@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "format": "prettier --write \"**/*.+(js|json|scss|html)\""
+    "format": "prettier --write \"**/*.+(js|json|scss|html)\"",
+    "check-format": "prettier --check ."
   },
   "dependencies": {
     "axios": "^0.21.1",
