@@ -1,62 +1,64 @@
-import NextAuth from 'next-auth'
-import Providers from 'next-auth/providers'
-import axios from 'axios'
+import NextAuth from "next-auth";
+import Providers from "next-auth/providers";
+import axios from "axios";
 
 const providers = [
   Providers.Credentials({
-    name: 'credentials',
+    name: "credentials",
     authorize: async (credentials) => {
-      console.log("provider")
+      console.log("provider");
       try {
-        const user = await axios.post("localhost:8081/api/auth/login",
-        {
-          user: {
-            username: credentials.username,
-            password: credentials.password
+        const user = await axios.post(
+          "localhost:8081/api/auth/login",
+          {
+            user: {
+              username: credentials.username,
+              password: credentials.password,
+            },
+          },
+          {
+            headers: {
+              accept: "*/*",
+              "Content-Type": "application/json",
+            },
           }
-        },
-        {
-          headers: {
-            accept: '*/*',
-            'Content-Type': 'application/json'
-          }
-        })
+        );
 
-        console.log("provider")
+        console.log("provider");
 
         if (user) {
-          return {status: 'success', data: user}
-        } 
+          return { status: "success", data: user };
+        }
       } catch (e) {
-        const errorMessage = e.response.data.message
+        const errorMessage = e.response.data.message;
         // Redirecting to the login page with error messsage in the URL
-        throw new Error(errorMessage + '&email=' + credentials.username)
+        throw new Error(errorMessage + "&email=" + credentials.username);
       }
-    }
-  })
-]
+    },
+  }),
+];
 
 const callbacks = {
   async jwt(token, user) {
     if (user) {
-      token.accessToken = user.data.token
+      token.accessToken = user.data.token;
     }
 
-    return token
+    return token;
   },
 
   async session(session, token) {
-    session.accessToken = token.accessToken
-    return session
-  }
-}
+    session.accessToken = token.accessToken;
+    return session;
+  },
+};
 
 const options = {
   providers,
   callbacks,
   pages: {
-    error: '/login' // Changing the error redirect page to our custom login page
-  }
-}
+    error: "/login", // Changing the error redirect page to our custom login page
+  },
+};
 
-export default (req, res) => NextAuth(req, res, options)
+export default (req, res) => NextAuth(req, res, options);

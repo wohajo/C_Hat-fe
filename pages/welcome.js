@@ -1,21 +1,21 @@
-import { useSession, signOut } from 'next-auth/client'
-import { useRouter } from 'next/router'
-import { useEffect } from 'react'
+import { useSession, signOut } from "next-auth/client";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 
-export default function Welcome () {
-	const [session, loading] = useSession()
-	const router = useRouter()
+export default function Welcome() {
+  const [session, loading] = useSession();
+  const router = useRouter();
 
-	useEffect(() => {
-		if(!loading && !session?.accessToken) {
-			router.push('/')
-		}
-	}, [loading, session])
+  useEffect(() => {
+    if (!loading && !session?.accessToken) {
+      router.push("/");
+    }
+  }, [loading, session]);
 
-	return (
-		<div class={styles.container}>
-			<h1>Welcome Page</h1>
-			<button onClick={() => signOut()}>Log Out</button>
-		</div>
-	)
+  return (
+    <div class={styles.container}>
+      <h1>Welcome Page</h1>
+      <button onClick={() => signOut()}>Log Out</button>
+    </div>
+  );
 }
