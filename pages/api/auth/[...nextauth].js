@@ -4,7 +4,7 @@ import axios from "axios";
 
 const providers = [
   Providers.Credentials({
-    name: "credentials",
+    name: "Credentials",
     authorize: async (credentials) => {
       console.log("provider");
       try {
@@ -57,7 +57,7 @@ const options = {
   providers,
   callbacks,
   pages: {
-    error: "/login", // Changing the error redirect page to our custom login page
+    error: "/register", // Changing the error redirect page to our custom login page
   },
 };
 

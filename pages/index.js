@@ -7,12 +7,11 @@ export default function Home() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = () => {
+  const handleLogin = (e) => {
+    e.preventDefault();
     signIn("credentials", {
       username,
       password,
-      // The page where you want to redirect to after a
-      // successful login
       callbackUrl: `${window.location.origin}/welcome`,
     });
   };
@@ -24,7 +23,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <h1>Welcome to C_Hat</h1>
-      <form onSubmit={handleLogin} className={styles.credentialsBox}>
+      <form onSubmit={(e) => handleLogin(e)} className={styles.credentialsBox}>
         <input
           type="text"
           id="username"
