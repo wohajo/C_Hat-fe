@@ -6,34 +6,38 @@ const providers = [
   Providers.Credentials({
     name: "Credentials",
     authorize: async (credentials) => {
-      console.log("provider");
-      try {
-        const user = await axios.post(
-          "localhost:8081/api/auth/login",
-          {
-            user: {
-              username: credentials.username,
-              password: credentials.password,
-            },
-          },
-          {
-            headers: {
-              accept: "*/*",
-              "Content-Type": "application/json",
-            },
-          }
-        );
+      console.log("starting post request");
 
-        console.log("provider");
-
-        if (user) {
-          return { status: "success", data: user };
+      var postData = JSON.stringify({
+        username: credentials.username,
+        password: credentials.password
+      })
+    
+      let axiosConfig = {
+        headers: {
+            'Content-Type': 'application/json;charset=UTF-8',
         }
-      } catch (e) {
-        const errorMessage = e.response.data.message;
-        // Redirecting to the login page with error messsage in the URL
-        throw new Error(errorMessage + "&email=" + credentials.username);
-      }
+      };
+      
+      axios.post('http://localhost:8081/api/auth/login', postData, axiosConfig)
+      .then((res) => {
+        console.log(res.status)
+        console.log(res.data)
+        return { status: "success", data: {"token": "Asddsadadsds"} };
+      })
+      .catch((err) => {
+        console.log(err.response.data.status)
+        console.log(err.response.data.message)
+        throw new Error(errorMessage + "&username=" + credentials.username);
+      })
+      
+      // if (credentials.password === "test") {
+        // console.log("finished post request");
+        // return { status: "success", data: {"token": "Asddsadadsds"} };
+      // } else {
+        // console.log("finished post request");
+        // throw new Error(errorMessage + "&email=" + credentials.username);
+      // }
     },
   }),
 ];

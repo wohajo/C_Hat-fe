@@ -4,16 +4,19 @@ import { signIn } from "next-auth/client";
 import styles from "../styles/Home.module.scss";
 
 export default function Home() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [getUsername, setUsername] = useState("");
+  const [getPassword, setPassword] = useState("");
+  const [hasLoginStarted, setHasLoginStarted] = useState(false);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    signIn("credentials", {
-      username,
-      password,
+    setHasLoginStarted(true)
+    await signIn("credentials", {
+      username: getUsername,
+      password: getPassword,
       callbackUrl: `${window.location.origin}/welcome`,
-    });
+    })
+    ;
   };
 
   return (
