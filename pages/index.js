@@ -14,8 +14,11 @@ export default function Home() {
     await signIn("credentials", {
       username: getUsername,
       password: getPassword,
+      redirect: false,
       callbackUrl: `${window.location.origin}/welcome`,
     })
+    .then((error) => console.log(error))
+    .catch((error) => console.log(error));
     ;
   };
 

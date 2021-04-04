@@ -23,20 +23,20 @@ const providers = [
       .then((res) => {
         console.log(res.status)
         console.log(res.data)
-        return { status: "success", data: {"token": "Asddsadadsds"} };
+        return { status: "success", data: res.data };
       })
       .catch((err) => {
         console.log(err.response.data.status)
         console.log(err.response.data.message)
-        throw new Error(errorMessage + "&username=" + credentials.username);
+        throw new Error(err.response.data.message);
       })
       
       // if (credentials.password === "test") {
-        // console.log("finished post request");
-        // return { status: "success", data: {"token": "Asddsadadsds"} };
+      //   console.log("finished post request");
+      //   return { status: "success", data: {"token": "Asddsadadsds"} };
       // } else {
-        // console.log("finished post request");
-        // throw new Error(errorMessage + "&email=" + credentials.username);
+      //   console.log("finished post request");
+      //   throw new Error(errorMessage + "&email=" + credentials.username);
       // }
     },
   }),
@@ -61,6 +61,7 @@ const options = {
   providers,
   callbacks,
   pages: {
+    signIn: "/",
     error: "/register", // Changing the error redirect page to our custom login page
   },
 };
