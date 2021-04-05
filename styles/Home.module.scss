@@ -14,16 +14,17 @@
 }
 
 .credentialsBox input {
-    padding: 2%;
-    width: 40vw;
-    border: none;
-    border-bottom: 2px solid black;
-    transition: linear 0.2s;
-    margin-bottom: 15px;
+  padding: 2%;
+  width: 40vw;
+  border: none;
+  border-bottom: 2px solid black;
+  transition: linear 0.2s;
+  margin-bottom: 15px;
 }
 
-.credentialsBox input:focus, .credentialsBox input:hover {
-  border-bottom: 2px solid darkviolet; 
+.credentialsBox input:focus,
+.credentialsBox input:hover {
+  border-bottom: 2px solid darkviolet;
 }
 
 #goToRegisterButton {
@@ -54,10 +55,18 @@
   }
 }
 
-.passwordLabel { grid-area: password-label; }
+.passwordLabel {
+  grid-area: password-label;
+}
 
-.loginLabel { grid-area: login-label; }
+.loginLabel {
+  grid-area: login-label;
+}
 
-.login { grid-area: login; }
+.login {
+  grid-area: login;
+}
 
-.password { grid-area: password; }
+.password {
+  grid-area: password;
+}

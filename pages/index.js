@@ -1,32 +1,21 @@
-import Head from 'next/head'
-import styles from '../styles/Home.module.scss'
-import axios from 'axios'
+import Head from "next/head";
+import { useState } from "react";
+import { signIn } from "next-auth/client";
+import styles from "../styles/Home.module.scss";
 
 export default function Home() {
+  const [getUsername, setUsername] = useState("");
+  const [getPassword, setPassword] = useState("");
+  const [hasLoginStarted, setHasLoginStarted] = useState(false);
 
-  const handleLogin = async event => {
-    var postData = JSON.stringify({
-      username: event.target.username.value,
-      password: event.target.password.value
-    })
-  
-    let axiosConfig = {
-      headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
-      }
-    };
-  
-    event.preventDefault()
-    axios.post('http://localhost:8081/api/auth/login', postData, axiosConfig)
-    .then((res) => {
-      console.log(res.status)
-      console.log(res.data)
-    })
-    .catch((err) => {
-      console.log(err.response.data.status)
-      console.log(err.response.data.message)
-      alert(err.response.data.message)
-    })
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setHasLoginStarted(true);
+    await signIn("credentials", {
+      username: getUsername,
+      password: getPassword,
+      callbackUrl: `${window.location.origin}/welcome`,
+    });
   };
 
   return (
@@ -35,13 +24,31 @@ export default function Home() {
         <title>C_Hat</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-        <h1>Welcome to C_Hat</h1>
-        <form onSubmit={handleLogin} className={styles.credentialsBox}>
-          <input type="text" id="username" name="username" placeholder="Username" required/>
-          <input type="password" id="password" name="password" placeholder="Password" required/>
-          <button type="submit" className={styles.credentialsBoxButton}>Log in</button>
-        </form>
-        <a href="/register" id={styles.goToRegisterButton}>Need an account? Register here!</a>
+      <h1>Welcome to C_Hat</h1>
+      <form onSubmit={(e) => handleLogin(e)} className={styles.credentialsBox}>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          placeholder="Username"
+          onChange={(e) => setUsername(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Password"
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <button type="submit" className={styles.credentialsBoxButton}>
+          Log in
+        </button>
+      </form>
+      <a href="/register" id={styles.goToRegisterButton}>
+        Need an account? Register here!
+      </a>
     </div>
-  )
+  );
 }
