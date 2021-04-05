@@ -14,7 +14,7 @@ export default function Home() {
     await signIn("credentials", {
       username: getUsername,
       password: getPassword,
-      callbackUrl: `${window.location.origin}/welcome`
+      callbackUrl: `${window.location.origin}/welcome`,
     });
   };
 

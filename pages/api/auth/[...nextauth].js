@@ -25,26 +25,31 @@ const providers = [
       //   .post("http://localhost:8081/api/auth/login", postData, axiosConfig)
 
       // if (user) {
-      //   console.log("finished post request");
+      //   console.log("===> finished post request with success");
       //   return { status: "success", data: user.data };
       // } else {
-      //   console.log("finished post request");
+      //   console.log("===> finished post request with error");
       //   throw new Error("err");
       // }
 
       // THIS VERSION VALIDATES PROPERLY, BUT ALWAYS RETURNS ERROR
 
       try {
-        const user = await axios
-        .post("http://localhost:8081/api/auth/login", postData, axiosConfig)
-        
-        if (user.token) {
-          console.log("finished post request with sucess");
-          return { status: "success", data: {"token": "Asddsadadsds"} };
+        const user = await axios.post(
+          "http://localhost:8081/api/auth/login",
+          postData,
+          axiosConfig
+        );
+
+        if (user) {
+          console.log(user)
+          console.log("===> finished post request with sucess");
+          return { status: "success", data: user.data };
         }
       } catch (error) {
-        console.log("finished post request with error");
-        throw new Error("err");
+        console.log(error)
+        console.log("===> finished post request with error");
+        throw new Error(error.response.data.message);
       }
     },
   }),
