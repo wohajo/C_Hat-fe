@@ -6,7 +6,6 @@ const providers = [
   Providers.Credentials({
     name: "Credentials",
     authorize: async (credentials) => {
-      console.log("------ starting post request -------");
 
       var postData = JSON.stringify({
         username: credentials.username,
@@ -19,21 +18,6 @@ const providers = [
         },
       };
 
-      // THIS VERSION VALIDATES PROPERLY, BUT I CAN'T GET ERROR MESSAGE IN CASE OF ERROR
-
-      // const user = await axios
-      //   .post("http://localhost:8081/api/auth/login", postData, axiosConfig)
-
-      // if (user) {
-      //   console.log("===> finished post request with success");
-      //   return { status: "success", data: user.data };
-      // } else {
-      //   console.log("===> finished post request with error");
-      //   throw new Error("err");
-      // }
-
-      // THIS VERSION VALIDATES PROPERLY, BUT ALWAYS RETURNS ERROR
-
       try {
         const user = await axios.post(
           "http://localhost:8081/api/auth/login",
@@ -42,13 +26,9 @@ const providers = [
         );
 
         if (user) {
-          console.log(user)
-          console.log("===> finished post request with sucess");
           return { status: "success", data: user.data };
         }
       } catch (error) {
-        console.log(error)
-        console.log("===> finished post request with error");
         throw new Error(error.response.data.message);
       }
     },
@@ -75,7 +55,7 @@ const options = {
   callbacks,
   pages: {
     signIn: "/",
-    error: "/register", // Changing the error redirect page to our custom login page
+    error: "/register"
   },
 };
 
