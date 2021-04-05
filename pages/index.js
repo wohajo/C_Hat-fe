@@ -10,16 +10,12 @@ export default function Home() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setHasLoginStarted(true)
+    setHasLoginStarted(true);
     await signIn("credentials", {
       username: getUsername,
       password: getPassword,
-      redirect: false,
-      callbackUrl: `${window.location.origin}/welcome`,
-    })
-    .then((error) => console.log(error))
-    .catch((error) => console.log(error));
-    ;
+      callbackUrl: `${window.location.origin}/welcome`
+    });
   };
 
   return (
