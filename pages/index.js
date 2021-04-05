@@ -1,12 +1,21 @@
 import Head from "next/head";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { signIn } from "next-auth/client";
+import { useRouter } from "next/router";
 import styles from "../styles/Home.module.scss";
 
 export default function Home() {
   const [getUsername, setUsername] = useState("");
   const [getPassword, setPassword] = useState("");
   const [hasLoginStarted, setHasLoginStarted] = useState(false);
+  const [loginError, setLoginError] = useState("");
+  const router = useRouter();
+
+  useEffect(() => {
+    if (router.query.error) {
+      setLoginError(router.query.error);
+    }
+  }, [router]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -26,6 +35,7 @@ export default function Home() {
       </Head>
       <h1>Welcome to C_Hat</h1>
       <form onSubmit={(e) => handleLogin(e)} className={styles.credentialsBox}>
+        <span className={styles.error}>{loginError}</span>
         <input
           type="text"
           id="username"
@@ -42,7 +52,11 @@ export default function Home() {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button type="submit" className={styles.credentialsBoxButton}>
+        <button
+          type="submit"
+          disabled={hasLoginStarted}
+          className={styles.credentialsBoxButton}
+        >
           Log in
         </button>
       </form>

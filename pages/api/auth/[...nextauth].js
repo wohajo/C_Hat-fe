@@ -6,7 +6,6 @@ const providers = [
   Providers.Credentials({
     name: "Credentials",
     authorize: async (credentials) => {
-
       var postData = JSON.stringify({
         username: credentials.username,
         password: credentials.password,
@@ -55,7 +54,7 @@ const options = {
   callbacks,
   pages: {
     signIn: "/",
-    error: "/register"
+    error: "/",
   },
 };
 
