@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { signIn } from "next-auth/client";
 import { useRouter } from "next/router";
 import styles from "../styles/Home.module.scss";
+import allStyles from "../styles/All.module.scss";
 
 export default function Home() {
   const [getUsername, setUsername] = useState("");
@@ -23,12 +24,12 @@ export default function Home() {
     await signIn("credentials", {
       username: getUsername,
       password: getPassword,
-      callbackUrl: `${window.location.origin}/welcome`,
+      callbackUrl: `${window.location.origin}/dashboard`,
     });
   };
 
   return (
-    <div className={styles.container}>
+    <div className={allStyles.container}>
       <Head>
         <title>C_Hat</title>
         <link rel="icon" href="/favicon.ico" />

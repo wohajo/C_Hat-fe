@@ -1,5 +1,6 @@
 import Head from "next/head";
 import styles from "../styles/Home.module.scss";
+import allStyles from "../styles/All.module.scss";
 import axios from "axios";
 
 export default function Register() {
@@ -34,7 +35,7 @@ export default function Register() {
   };
 
   return (
-    <div className={styles.container}>
+    <div className={allStyles.container}>
       <Head>
         <title>C_Hat - Register</title>
         <link rel="icon" href="/favicon.ico" />
