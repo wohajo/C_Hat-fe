@@ -22,15 +22,14 @@ export default function Register() {
 
     event.preventDefault();
     axios
-      .post("http://localhost:8081/api/users/register", postData, axiosConfig)
+      .post("api/users/register", postData, axiosConfig)
       .then((res) => {
-        console.log(res.status);
-        console.log(res.data);
+        console.log(res);
+        console.log(res);
       })
       .catch((err) => {
-        console.log(err.response.data.status);
-        console.log(err.response.data.message);
-        alert(err.response.data.message);
+        console.log(err.response);
+        console.log(err.response);
       });
   };
 

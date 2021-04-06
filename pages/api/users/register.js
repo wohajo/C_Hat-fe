@@ -17,14 +17,12 @@ export default function userHandler(req, res) {
     case "POST":
       axios
         .post("http://localhost:8081/api/users/register", req.body, axiosConfig)
-        .then((res) => {
-          console.log("--OK in sending--");
-          res.status(200);
+        .then((serverResponse) => {
+          res.status(200).json(serverResponse.data)
           res.end();
         })
         .catch((err) => {
-          console.log("--error in sending--");
-          res.status(err.response.data.status);
+          res.status(err.response.data.status).json(err.response.data);
           res.end();
         });
       break;
