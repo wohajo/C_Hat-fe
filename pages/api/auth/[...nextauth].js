@@ -12,6 +12,10 @@ const providers = [
       });
 
       let axiosConfig = {
+        auth: {
+          username: credentials.username,
+          password: credentials.password
+        },
         headers: {
           "Content-Type": "application/json;charset=UTF-8",
         },
