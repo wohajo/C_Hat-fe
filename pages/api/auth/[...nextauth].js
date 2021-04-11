@@ -6,11 +6,6 @@ const providers = [
   Providers.Credentials({
     name: "Credentials",
     authorize: async (credentials) => {
-      var postData = JSON.stringify({
-        username: credentials.username,
-        password: credentials.password,
-      });
-
       let axiosConfig = {
         auth: {
           username: credentials.username,
@@ -24,7 +19,7 @@ const providers = [
       try {
         const user = await axios.post(
           "http://localhost:8081/api/auth/login",
-          postData,
+          {},
           axiosConfig
         );
 
