@@ -6,13 +6,11 @@ const providers = [
   Providers.Credentials({
     name: "Credentials",
     authorize: async (credentials) => {
-
-      var postData = JSON.stringify({
-        username: credentials.username,
-        password: credentials.password,
-      });
-
       let axiosConfig = {
+        auth: {
+          username: credentials.username,
+          password: credentials.password
+        },
         headers: {
           "Content-Type": "application/json;charset=UTF-8",
         },
@@ -21,7 +19,7 @@ const providers = [
       try {
         const user = await axios.post(
           "http://localhost:8081/api/auth/login",
-          postData,
+          {},
           axiosConfig
         );
 
@@ -55,7 +53,7 @@ const options = {
   callbacks,
   pages: {
     signIn: "/",
-    error: "/register"
+    error: "/",
   },
 };
 

@@ -1,5 +1,6 @@
 import Head from "next/head";
 import styles from "../styles/Home.module.scss";
+import allStyles from "../styles/All.module.scss";
 import axios from "axios";
 
 export default function Register() {
@@ -21,20 +22,19 @@ export default function Register() {
 
     event.preventDefault();
     axios
-      .post("http://localhost:8081/api/users/register", postData, axiosConfig)
+      .post("api/users/register", postData, axiosConfig)
       .then((res) => {
-        console.log(res.status);
-        console.log(res.data);
+        console.log(res);
+        console.log(res);
       })
       .catch((err) => {
-        console.log(err.response.data.status);
-        console.log(err.response.data.message);
-        alert(err.response.data.message);
+        console.log(err.response);
+        console.log(err.response);
       });
   };
 
   return (
-    <div className={styles.container}>
+    <div className={allStyles.container}>
       <Head>
         <title>C_Hat - Register</title>
         <link rel="icon" href="/favicon.ico" />
