@@ -1,0 +1,76 @@
+.chatContainer {
+  height: 70vh;
+  width: 80%;
+  display: grid;
+  border-left: 1px solid black;
+  border-right: 1px solid black;
+  grid-template-columns: 1fr 1.2fr 0.8fr;
+  grid-template-rows: 1.7fr 0.3fr;
+  gap: 0px 0px;
+  grid-template-areas:
+    "chatArea chatArea chatArea"
+    "messageArea messageArea buttonsArea";
+}
+
+.chatArea {
+  grid-area: chatArea;
+  height: 100%;
+  width: 100%;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.messageArea {
+  grid-area: messageArea;
+  border-bottom: 1px solid black;
+  border-top: 1px solid black;
+  margin: 5px;
+}
+
+.messageBox {
+  width: 100%;
+  height: 100%;
+}
+
+.buttonsArea {
+  grid-area: buttonsArea;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sendButton {
+  width: 80%;
+  height: 30%;
+  font-size: large;
+  background-color: darkviolet;
+  border: none;
+  padding: 5px;
+  color: white;
+  margin-bottom: 5px;
+}
+
+.sendButton:hover {
+  background-color: rgb(157, 0, 224);
+  cursor: pointer;
+}
+
+.chatFromUser,
+.chatToUser {
+  padding: 10px;
+  border: 1px solid black;
+  border-radius: 10px;
+  height: fit-content;
+  width: fit-content;
+}
+
+.chatFromUser {
+  background-color: darkviolet;
+  color: white;
+}
+
+.chatToUser {
+  margin-right: -2px;
+}

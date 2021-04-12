@@ -9,7 +9,7 @@ const providers = [
       let axiosConfig = {
         auth: {
           username: credentials.username,
-          password: credentials.password
+          password: credentials.password,
         },
         headers: {
           "Content-Type": "application/json;charset=UTF-8",
@@ -22,7 +22,7 @@ const providers = [
           {},
           axiosConfig
         );
-          console.log("trying")
+        console.log("trying");
         if (user) {
           return { status: "success", data: user.data };
         }

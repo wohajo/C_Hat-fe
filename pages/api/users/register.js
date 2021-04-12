@@ -18,7 +18,7 @@ export default function userHandler(req, res) {
       axios
         .post("http://localhost:8081/api/users/register", req.body, axiosConfig)
         .then((serverResponse) => {
-          res.status(200).json(serverResponse.data)
+          res.status(200).json(serverResponse.data);
           res.end();
         })
         .catch((err) => {
