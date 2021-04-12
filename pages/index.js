@@ -21,6 +21,7 @@ export default function Home() {
   const handleLogin = async (e) => {
     e.preventDefault();
     setHasLoginStarted(true);
+    console.log("logging in")
     await signIn("credentials", {
       username: getUsername,
       password: getPassword,

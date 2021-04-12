@@ -2,6 +2,7 @@ import { useSession, signOut, getSession } from "next-auth/client";
 import allStyles from "../styles/All.module.scss";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import ChatWindow from "../components/ChatWindow";
 
 export default function Dashobard({data}) {
   const [session, loading] = useSession();
@@ -22,6 +23,7 @@ export default function Dashobard({data}) {
     <div className={allStyles.container}>
       <h1>Welcome, {data.title}</h1>
       <button onClick={() => signOut()}>Log Out</button>
+      <ChatWindow/>
     </div>
   );
 }
