@@ -4,29 +4,38 @@ const ENDPOINT = "http://127.0.0.1:8081";
 import styles from "../styles/Chat.module.scss";
 
 function ChatWindow() {
-  const [response, setResponse] = useState("");
+  const [responses, setResponses] = useState([]);
 
   useEffect(() => {
     const socket = socketIOClient(ENDPOINT);
     socket.on("my response", (data) => {
-      setResponse(data);
+      setResponses(responses => [...responses, data])
     });
   }, []);
 
+  useEffect(() => {
+      console.log(responses)
+  }, [responses]);
+
   return (
-    // <p>
-    //   {/* {response.message} */}
-    // </p>
     <div className={styles.chatContainer}>
       <div className={styles.chatArea}>
-        <p className={styles.chatFromUser}>test chat from user</p>
-        <p className={styles.chatToUser}>test chat from receiver</p>
+        <p className={styles.chatFromUser}>
+          test chat from user
+        </p>
+        <p className={styles.chatToUser}>
+          test chat from receiver a bit longer
+        </p>
+        {
+          responses.map(response => <p key={response.timestamp} className={styles.chatFromUser}>{response.message}</p>)
+        }
       </div>
       <div className={styles.messageArea}>
         <textarea
           className={styles.messageBox}
           id="message-box-contents"
           name="message-box-contents"
+          placeholder="Type a message..."
         ></textarea>
       </div>
       <div className={styles.buttonsArea}>
