@@ -5,30 +5,40 @@ import styles from "../styles/Chat.module.scss";
 
 function ChatWindow() {
   const [responses, setResponses] = useState([]);
+  const [messageValue, setMessageValue] = useState("");
+  const socket = socketIOClient(ENDPOINT);
 
   useEffect(() => {
-    const socket = socketIOClient(ENDPOINT);
     socket.on("my response", (data) => {
-      setResponses(responses => [...responses, data])
+      setResponses((responses) => [...responses, data]);
     });
   }, []);
 
   useEffect(() => {
-      console.log(responses)
+    console.log(responses);
   }, [responses]);
+
+  const sendMessage = () => {
+    socket.emit("my event", {
+      // TODO change username to current user
+      user_name: "nextjsuser",
+      message: messageValue,
+      timestamp: Date.now(),
+    });
+  };
 
   return (
     <div className={styles.chatContainer}>
       <div className={styles.chatArea}>
-        <p className={styles.chatFromUser}>
-          test chat from user
-        </p>
+        <p className={styles.chatFromUser}>test chat from user</p>
         <p className={styles.chatToUser}>
           test chat from receiver a bit longer
         </p>
-        {
-          responses.map(response => <p key={response.timestamp} className={styles.chatFromUser}>{response.message}</p>)
-        }
+        {responses.map((response) => (
+          <p key={response.timestamp} className={styles.chatFromUser}>
+            {response.message}
+          </p>
+        ))}
       </div>
       <div className={styles.messageArea}>
         <textarea
@@ -36,10 +46,19 @@ function ChatWindow() {
           id="message-box-contents"
           name="message-box-contents"
           placeholder="Type a message..."
+          value={messageValue}
+          onChange={(e) => {
+            setMessageValue(e.target.value);
+          }}
         ></textarea>
       </div>
       <div className={styles.buttonsArea}>
-        <button className={styles.sendButton}>Send</button>
+        <button
+          className={styles.sendButton}
+          onClick={sendMessage}
+        >
+          Send
+        </button>
       </div>
     </div>
   );
