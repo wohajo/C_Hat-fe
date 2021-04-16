@@ -13,6 +13,7 @@ export default function userHandler(req, res) {
     method,
   } = req;
 
+  // TODO change res to promise
   switch (method) {
     case "POST":
       axios

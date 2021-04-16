@@ -37,6 +37,7 @@ const callbacks = {
   async jwt(token, user) {
     if (user) {
       token.accessToken = user.data.token;
+      token.user = user.data.username;
     }
 
     return token;
@@ -44,6 +45,7 @@ const callbacks = {
 
   async session(session, token) {
     session.accessToken = token.accessToken;
+    session.user.name = token.user;
     return session;
   },
 };

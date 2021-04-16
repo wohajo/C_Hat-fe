@@ -1,35 +1,32 @@
 import { useSession, signOut, getSession } from "next-auth/client";
 import allStyles from "../styles/All.module.scss";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import ChatWindow from "../components/ChatWindow";
 
-export default function Dashobard({ data }) {
+export default function Dashobard() {
   const [session, loading] = useSession();
+  const [username, setUsername] = useState("");
   const router = useRouter();
 
   useEffect(() => {
     if (!loading && !session?.accessToken) {
       router.push("/");
     }
-
-    if (session) {
-      return <p>{session.accessToken}</p>;
-    }
   }, [loading, session]);
+
+  useEffect( async () => {
+    await getSession()
+      .then((res) => {
+        setUsername(res.user.name);
+      });
+  }, []);
 
   return (
     <div className={allStyles.container}>
-      <h1>Welcome, {data.title}</h1>
+      <h1>Welcome, {username}</h1>
       <button onClick={() => signOut()}>Log Out</button>
-      <ChatWindow />
+      <ChatWindow username={username}/>
     </div>
   );
-}
-
-export async function getServerSideProps() {
-  const res = await fetch(`https://jsonplaceholder.typicode.com/todos/1`);
-  const data = await res.json();
-
-  return { props: { data } };
 }

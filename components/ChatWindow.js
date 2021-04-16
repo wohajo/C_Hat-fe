@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from "react";
 import socketIOClient from "socket.io-client";
-const ENDPOINT = "http://127.0.0.1:8081";
+import { useSession, getSession } from "next-auth/client";
 import styles from "../styles/Chat.module.scss";
 
-function ChatWindow() {
+const ENDPOINT = "http://127.0.0.1:8081";
+
+
+function ChatWindow({ username }) {
   const [responses, setResponses] = useState([]);
   const [messageValue, setMessageValue] = useState("");
+  const [session, loading] = useSession();
   const socket = socketIOClient(ENDPOINT);
 
   useEffect(() => {
@@ -19,23 +23,30 @@ function ChatWindow() {
   }, [responses]);
 
   const sendMessage = () => {
+    if (messageValue.length < 1) {
+      return
+    }
     socket.emit("my event", {
-      // TODO change username to current user
-      user_name: "nextjsuser",
+      user_name: username,
       message: messageValue,
       timestamp: Date.now(),
     });
+    setMessageValue("");
   };
+
+  const checkUser = (userToCheck) => {
+    if (userToCheck === username) {
+      return styles.chatFromUser
+    } else {
+      return styles.chatToUser
+    }
+  }
 
   return (
     <div className={styles.chatContainer}>
       <div className={styles.chatArea}>
-        <p className={styles.chatFromUser}>test chat from user</p>
-        <p className={styles.chatToUser}>
-          test chat from receiver a bit longer
-        </p>
         {responses.map((response) => (
-          <p key={response.timestamp} className={styles.chatFromUser}>
+          <p key={response.timestamp} className={checkUser(response.user_name)}>
             {response.message}
           </p>
         ))}
