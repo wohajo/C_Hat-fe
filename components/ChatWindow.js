@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from "react";
 import socketIOClient from "socket.io-client";
-import { useSession, getSession } from "next-auth/client";
 import styles from "../styles/Chat.module.scss";
 
 const ENDPOINT = "http://127.0.0.1:8081";
 
-
 function ChatWindow({ username }) {
   const [responses, setResponses] = useState([]);
   const [messageValue, setMessageValue] = useState("");
-  const [session, loading] = useSession();
   const socket = socketIOClient(ENDPOINT);
 
   useEffect(() => {
@@ -24,7 +21,7 @@ function ChatWindow({ username }) {
 
   const sendMessage = () => {
     if (messageValue.length < 1) {
-      return
+      return;
     }
     socket.emit("my event", {
       user_name: username,
@@ -34,13 +31,23 @@ function ChatWindow({ username }) {
     setMessageValue("");
   };
 
+  const joinRoom1 = () => {
+    socket.emit("leave", {room: "room2"});
+    socket.emit("join", {room: "room1"});
+  };
+
+  const joinRoom2 = () => {
+    socket.emit("leave", {room: "room1"});
+    socket.emit("join", {room: "room2"});
+  };
+
   const checkUser = (userToCheck) => {
     if (userToCheck === username) {
-      return styles.chatFromUser
+      return styles.chatFromUser;
     } else {
-      return styles.chatToUser
+      return styles.chatToUser;
     }
-  }
+  };
 
   return (
     <div className={styles.chatContainer}>
@@ -64,12 +71,11 @@ function ChatWindow({ username }) {
         ></textarea>
       </div>
       <div className={styles.buttonsArea}>
-        <button
-          className={styles.sendButton}
-          onClick={sendMessage}
-        >
+        <button className={styles.sendButton} onClick={sendMessage}>
           Send
         </button>
+        <button onClick={() => joinRoom1()}>Room 1</button>
+        <button onClick={() => joinRoom2()}>Room 2</button>
       </div>
     </div>
   );

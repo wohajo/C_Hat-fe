@@ -15,18 +15,22 @@ export default function Dashobard() {
     }
   }, [loading, session]);
 
-  useEffect( async () => {
-    await getSession()
-      .then((res) => {
-        setUsername(res.user.name);
-      });
+  useEffect(async () => {
+    await getSession().then((res) => {
+      setUsername(res.user.name);
+    });
   }, []);
+
+  const signOutHandler = () => {
+    signOut();
+    router.push("/");
+  };
 
   return (
     <div className={allStyles.container}>
       <h1>Welcome, {username}</h1>
-      <button onClick={() => signOut()}>Log Out</button>
-      <ChatWindow username={username}/>
+      <button onClick={() => signOutHandler()}>Log Out</button>
+      <ChatWindow username={username} />
     </div>
   );
 }
