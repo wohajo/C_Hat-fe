@@ -27,14 +27,12 @@ function ChatWindow({ username, token }) {
     setMessageValue("");
   };
 
-  const joinRoom1 = () => {
-    socket.emit("leave", {room: username + "/" + "user2", token: token, username: username});
-    socket.emit("join", {room: username + "/" + "user", token: token, username: username});
+  const joinRoom = (recipient) => {
+    socket.emit("join", {token: token, username: username, recipient: recipient});
   };
 
-  const joinRoom2 = () => {
-    socket.emit("leave", {room: "ddd" + "/" + "user", token: token, username: username});
-    socket.emit("join", {room: "ddd" + "/" + "user2", token: token, username: username});
+  const leaveRoom = (recipient) => {
+    socket.emit("leave", {token: token, username: username, recipient: recipient});
   };
 
   const checkUser = (userToCheck) => {
@@ -70,8 +68,12 @@ function ChatWindow({ username, token }) {
         <button className={styles.sendButton} onClick={sendMessage}>
           Send
         </button>
-        <button onClick={() => joinRoom1()}>user</button>
-        <button onClick={() => joinRoom2()}>user2</button>
+        <button onClick={() => joinRoom("user")}>join user</button>
+        <button onClick={() => leaveRoom("user")}>leave user</button>
+        <button onClick={() => joinRoom("user2")}>join user2</button>
+        <button onClick={() => leaveRoom("user2")}>leave user2</button>
+        <button onClick={() => joinRoom("user3")}>join user3</button>
+        <button onClick={() => leaveRoom("user3")}>leave user3</button>
       </div>
     </div>
   );
