@@ -4,7 +4,7 @@ import styles from "../styles/Chat.module.scss";
 
 const ENDPOINT = "http://127.0.0.1:8081";
 
-function ChatWindow({ username }) {
+function ChatWindow({ username, token }) {
   const [responses, setResponses] = useState([]);
   const [messageValue, setMessageValue] = useState("");
   const socket = socketIOClient(ENDPOINT);
@@ -14,10 +14,6 @@ function ChatWindow({ username }) {
       setResponses((responses) => [...responses, data]);
     });
   }, []);
-
-  useEffect(() => {
-    console.log(responses);
-  }, [responses]);
 
   const sendMessage = () => {
     if (messageValue.length < 1) {
@@ -32,13 +28,13 @@ function ChatWindow({ username }) {
   };
 
   const joinRoom1 = () => {
-    socket.emit("leave", {room: "room2"});
-    socket.emit("join", {room: "room1"});
+    socket.emit("leave", {room: username + "/" + "user2", token: token, username: username});
+    socket.emit("join", {room: username + "/" + "user", token: token, username: username});
   };
 
   const joinRoom2 = () => {
-    socket.emit("leave", {room: "room1"});
-    socket.emit("join", {room: "room2"});
+    socket.emit("leave", {room: "ddd" + "/" + "user", token: token, username: username});
+    socket.emit("join", {room: "ddd" + "/" + "user2", token: token, username: username});
   };
 
   const checkUser = (userToCheck) => {
@@ -74,8 +70,8 @@ function ChatWindow({ username }) {
         <button className={styles.sendButton} onClick={sendMessage}>
           Send
         </button>
-        <button onClick={() => joinRoom1()}>Room 1</button>
-        <button onClick={() => joinRoom2()}>Room 2</button>
+        <button onClick={() => joinRoom1()}>user</button>
+        <button onClick={() => joinRoom2()}>user2</button>
       </div>
     </div>
   );
