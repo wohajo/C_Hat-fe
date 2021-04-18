@@ -10,7 +10,7 @@ function ChatWindow({ username, token }) {
   const socket = socketIOClient(ENDPOINT);
 
   useEffect(() => {
-    socket.on("my response", (data) => {
+    socket.on("global response", (data) => {
       setResponses((responses) => [...responses, data]);
     });
   }, []);
@@ -19,7 +19,7 @@ function ChatWindow({ username, token }) {
     if (messageValue.length < 1) {
       return;
     }
-    socket.emit("my event", {
+    socket.emit("global message", {
       user_name: username,
       message: messageValue,
       timestamp: Date.now(),
