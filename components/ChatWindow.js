@@ -19,6 +19,7 @@ function ChatWindow({ username, token }) {
     if (messageValue.length < 1) {
       return;
     }
+
     socket.emit("global message", {
       user_name: username,
       message: messageValue,
@@ -28,11 +29,19 @@ function ChatWindow({ username, token }) {
   };
 
   const joinRoom = (recipient) => {
-    socket.emit("join", {token: token, username: username, recipient: recipient});
+    socket.emit("join", {
+      token: token,
+      username: username,
+      recipient: recipient,
+    });
   };
 
   const leaveRoom = (recipient) => {
-    socket.emit("leave", {token: token, username: username, recipient: recipient});
+    socket.emit("leave", {
+      token: token,
+      username: username,
+      recipient: recipient,
+    });
   };
 
   const checkUser = (userToCheck) => {
@@ -61,6 +70,11 @@ function ChatWindow({ username, token }) {
           value={messageValue}
           onChange={(e) => {
             setMessageValue(e.target.value);
+          }}
+          onKeyUp={(event) => {
+            if (event.key === "Enter") {
+              sendMessage();
+            }
           }}
         ></textarea>
       </div>

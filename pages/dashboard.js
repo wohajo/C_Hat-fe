@@ -34,7 +34,7 @@ export default function Dashobard() {
     <div className={allStyles.container}>
       <h1>Welcome, {username}</h1>
       <button onClick={() => signOutHandler()}>Log Out</button>
-      <ChatWindow username={username} token={token}/>
+      <ChatWindow username={username} token={token} />
     </div>
   );
 }
