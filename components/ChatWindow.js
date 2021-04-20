@@ -6,6 +6,8 @@ const ENDPOINT = "http://127.0.0.1:8081";
 
 function ChatWindow({ username, token }) {
   const [responses, setResponses] = useState([]);
+  const [roomsMap, setRoomsMap] = useState(new Map());
+  // const [currentRoom, setCurrentRoom] = useState(0);
   const [messageValue, setMessageValue] = useState("");
   const socket = socketIOClient(ENDPOINT);
 
@@ -13,7 +15,29 @@ function ChatWindow({ username, token }) {
     socket.on("global response", (data) => {
       setResponses((responses) => [...responses, data]);
     });
+
+    socket.on("room name response", (data) => {
+      console.log(`joined ${data.roomName} with ${data.recipient}`);
+      setRoomsMap((roomsMap) => roomsMap.set(data.recipient, data.roomName));
+    });
+
+    return () => socket.close();
   }, []);
+
+  // useEffect(() => {
+  //   socket.on("room name response", (data) => {
+  //     console.log(`joined ${data.roomName} with ${data.recipient}`);
+  //     setRooms((rooms) => rooms.set(data.recipient, data.roomName));
+  //   });
+  // });
+
+  useEffect(() => {
+    roomsMap.forEach((val, key) => console.log(`${val}:${key}`));
+  }, [roomsMap])
+
+  // useEffect(() => {
+  //   console.log(`${currentRoom}`);
+  // }, [currentRoom])
 
   const sendMessage = () => {
     if (messageValue.length < 1) {
@@ -34,6 +58,8 @@ function ChatWindow({ username, token }) {
       username: username,
       recipient: recipient,
     });
+
+    // setCurrentRoom(() => rooms.get(recipient));
   };
 
   const leaveRoom = (recipient) => {
@@ -42,6 +68,12 @@ function ChatWindow({ username, token }) {
       username: username,
       recipient: recipient,
     });
+    
+    const newRooms = roomsMap;
+    newRooms.delete(recipient);
+    console.log(`left room with ${recipient}`);
+    newRooms.forEach((val, key) => console.log(`${val}:${key}`));
+    setRoomsMap(newRooms);
   };
 
   const checkUser = (userToCheck) => {

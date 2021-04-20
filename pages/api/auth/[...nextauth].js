@@ -22,7 +22,6 @@ const providers = [
           {},
           axiosConfig
         );
-        console.log("trying");
         if (user) {
           return { status: "success", data: user.data };
         }
