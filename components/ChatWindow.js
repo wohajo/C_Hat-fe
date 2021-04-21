@@ -1,43 +1,29 @@
 import React, { useState, useEffect } from "react";
 import socketIOClient from "socket.io-client";
 import styles from "../styles/Chat.module.scss";
+import { socket } from "./service/socket";
 
-const ENDPOINT = "http://127.0.0.1:8081";
 
 function ChatWindow({ username, token }) {
   const [responses, setResponses] = useState([]);
   const [roomsMap, setRoomsMap] = useState(new Map());
-  // const [currentRoom, setCurrentRoom] = useState(0);
+  const [currentRoom, setCurrentRoom] = useState("");
   const [messageValue, setMessageValue] = useState("");
-  const socket = socketIOClient(ENDPOINT);
+
 
   useEffect(() => {
     socket.on("global response", (data) => {
-      setResponses((responses) => [...responses, data]);
+        setResponses((responses) => [...responses, data]);
     });
 
-    socket.on("room name response", (data) => {
+    socket.on("room_name_response", (data) => {
       console.log(`joined ${data.roomName} with ${data.recipient}`);
+      setCurrentRoom(() => data.roomName);
       setRoomsMap((roomsMap) => roomsMap.set(data.recipient, data.roomName));
     });
 
     return () => socket.close();
   }, []);
-
-  // useEffect(() => {
-  //   socket.on("room name response", (data) => {
-  //     console.log(`joined ${data.roomName} with ${data.recipient}`);
-  //     setRooms((rooms) => rooms.set(data.recipient, data.roomName));
-  //   });
-  // });
-
-  useEffect(() => {
-    roomsMap.forEach((val, key) => console.log(`${val}:${key}`));
-  }, [roomsMap])
-
-  // useEffect(() => {
-  //   console.log(`${currentRoom}`);
-  // }, [currentRoom])
 
   const sendMessage = () => {
     if (messageValue.length < 1) {
@@ -59,7 +45,7 @@ function ChatWindow({ username, token }) {
       recipient: recipient,
     });
 
-    // setCurrentRoom(() => rooms.get(recipient));
+    setCurrentRoom(() => roomsMap.get(recipient));
   };
 
   const leaveRoom = (recipient) => {
@@ -73,7 +59,7 @@ function ChatWindow({ username, token }) {
     newRooms.delete(recipient);
     console.log(`left room with ${recipient}`);
     newRooms.forEach((val, key) => console.log(`${val}:${key}`));
-    setRoomsMap(newRooms);
+    setRoomsMap(() => newRooms);
   };
 
   const checkUser = (userToCheck) => {
