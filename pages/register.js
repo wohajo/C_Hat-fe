@@ -25,10 +25,8 @@ export default function Register() {
       .post("api/users/register", postData, axiosConfig)
       .then((res) => {
         console.log(res);
-        console.log(res);
       })
       .catch((err) => {
-        console.log(err.response);
         console.log(err.response);
       });
   };
