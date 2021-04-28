@@ -7,7 +7,6 @@ import ChatWindow from "../components/ChatWindow";
 export default function Dashobard() {
   const [session, loading] = useSession();
   const [username, setUsername] = useState("");
-  const [token, setToken] = useState("");
   const router = useRouter();
 
   useEffect(() => {
@@ -20,7 +19,8 @@ export default function Dashobard() {
     await getSession().then((res) => {
       if (res !== null) {
         setUsername(res.user.name);
-        setToken(res.accessToken);
+      } else {
+        router.push("/");
       }
     });
   }, []);
@@ -34,7 +34,7 @@ export default function Dashobard() {
     <div className={allStyles.container}>
       <h1>Welcome, {username}</h1>
       <button onClick={() => signOutHandler()}>Log Out</button>
-      <ChatWindow username={username} token={token} />
+      <ChatWindow username={username} />
     </div>
   );
 }

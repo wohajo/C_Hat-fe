@@ -1,19 +1,52 @@
+import { getSession } from "next-auth/client";
 import React, { useState, useEffect } from "react";
-import socketIOClient from "socket.io-client";
 import styles from "../styles/Chat.module.scss";
 import { socket } from "./service/socket";
+import axios from "axios";
 
-
-function ChatWindow({ username, token }) {
+function ChatWindow({ username }) {
   const [responses, setResponses] = useState([]);
   const [roomsMap, setRoomsMap] = useState(new Map());
   const [currentRoom, setCurrentRoom] = useState("");
+  const [token, setToken] = useState("");
   const [messageValue, setMessageValue] = useState("");
+  const [friends, setFriends] = useState([]);
 
+
+  useEffect(async () => {
+    await getSession()
+    .then((res) => {
+      if (res !== null) {
+        setToken(res.accessToken);
+        axios
+        .get("http://localhost:8081/api/friends/my", {
+          auth: {
+            username: res.accessToken,
+            password: "x",
+          },
+          headers: {
+            "Content-Type": "application/json;charset=UTF-8",
+            "Access-Control-Allow-Origin": "*",
+          },
+        })
+        .then((res) => {
+          console.log(res);
+          setFriends(() => [...res.data.friends]);
+        })
+        .catch((err) => console.log(err));
+      } else {
+        router.push("/");
+      }
+    })
+  }, []);
+
+  useEffect(() => {
+    console.log(friends);
+  }, [friends]);
 
   useEffect(() => {
     socket.on("global response", (data) => {
-        setResponses((responses) => [...responses, data]);
+      setResponses((responses) => [...responses, data]);
     });
 
     socket.on("room_name_response", (data) => {
@@ -54,7 +87,7 @@ function ChatWindow({ username, token }) {
       username: username,
       recipient: recipient,
     });
-    
+
     const newRooms = roomsMap;
     newRooms.delete(recipient);
     console.log(`left room with ${recipient}`);

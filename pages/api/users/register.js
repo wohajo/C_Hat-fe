@@ -22,7 +22,11 @@ export default async function userHandler(req, res) {
           res.end();
         })
         .catch((err) => {
-          res.status(err.response.status).json(err.response.data);
+          if (err.code === "ECONNREFUSED") {
+            res.status(503).json({ message: "No connection to the server" });
+          } else {
+            res.status(err.response.status).json(err.response.data);
+          }
           res.end();
         });
       break;
