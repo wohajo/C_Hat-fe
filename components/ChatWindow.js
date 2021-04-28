@@ -105,6 +105,16 @@ function ChatWindow({ username }) {
 
   return (
     <div className={styles.chatContainer}>
+      <div className={styles.friendsWindow}>
+      <div className={styles.friendDiv}>
+            asdsd
+          </div>
+        {friends.map((friend) => (
+          <div className={styles.friendDiv}>
+            {friend.username}
+          </div>
+        ))}
+      </div>
       <div className={styles.chatArea}>
         {responses.map((response) => (
           <p key={response.timestamp} className={checkUser(response.user_name)}>
