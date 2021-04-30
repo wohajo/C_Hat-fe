@@ -17,7 +17,8 @@ function ChatWindow({ username }) {
     await getSession()
     .then((res) => {
       if (res !== null) {
-        setToken(res.accessToken);
+        setToken(() => res.accessToken);
+        console.log(res);
         axios
         .get("http://localhost:8081/api/friends/my", {
           auth: {
@@ -103,14 +104,23 @@ function ChatWindow({ username }) {
     }
   };
 
+  const signOutHandler = () => {
+    router.push("/");
+    signOut();
+  };
+
   return (
     <div className={styles.chatContainer}>
       <div className={styles.friendsWindow}>
-      <div className={styles.friendDiv}>
-            asdsd
-          </div>
+        <div className={styles.utilityDiv}>
+          <button onClick={() => signOutHandler()}>Log Out</button>
+        </div>
+        <div className={styles.utilityDiv}>
+          {/* friends searching, addding, accepting/decilinig */}
+          Friends 
+        </div>
         {friends.map((friend) => (
-          <div className={styles.friendDiv}>
+          <div className={styles.friendDiv} id={friend.id} name={friend.username} key={friend.id}>
             {friend.username}
           </div>
         ))}

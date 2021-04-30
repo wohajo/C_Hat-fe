@@ -25,15 +25,9 @@ export default function Dashobard() {
     });
   }, []);
 
-  const signOutHandler = () => {
-    router.push("/");
-    signOut();
-  };
-
   return (
     <div className={allStyles.container}>
       <h1>Welcome, {username}</h1>
-      <button onClick={() => signOutHandler()}>Log Out</button>
       <ChatWindow username={username} />
     </div>
   );
