@@ -111,6 +111,24 @@ function ChatWindow({ username }) {
     }
   }
 
+  const getMessages = async (userId) => {
+    await axios
+      .get(`http://localhost:8081/api/messages/with/${userId}/1`, {
+        auth: {
+          username: token,
+          password: "x",
+        },
+        headers: {
+          "Content-Type": "application/json;charset=UTF-8",
+          "Access-Control-Allow-Origin": "*",
+        },
+      })
+      .then((res) => {
+        setResponses(() => [...res.data.messages.datas]);
+      })
+      .catch((err) => console.log(err));
+  }
+
   return (
     <div className={styles.chatContainer}>
       <div className={styles.sidePanel}>
@@ -130,7 +148,10 @@ function ChatWindow({ username }) {
               id={friend.id}
               name={friend.username}
               key={friend.id}
-              onClick={() => setCurrentRecipient(() => friend.username)}
+              onClick={() => {
+                getMessages(friend.id);
+                setCurrentRecipient(() => friend.username);
+              }}
             >
               {friend.username}
             </div>

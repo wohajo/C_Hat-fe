@@ -43,11 +43,12 @@
   background-color: rgb(209, 209, 209);
 }
 
-.friendsWindow, .utilityWindow {
+.friendsWindow,
+.utilityWindow {
   div {
     cursor: pointer;
   }
-  
+
   div:hover {
     background-color: rgb(209, 209, 209);
   }

@@ -15,8 +15,7 @@ export default function Friends() {
 
   return (
     <div className={allStyles.container}>
-        <h1>Manage friends</h1>
-        
+      <h1>Manage friends</h1>
     </div>
   );
 }
