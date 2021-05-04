@@ -2,11 +2,9 @@ import { useSession, getSession } from "next-auth/client";
 import allStyles from "../styles/All.module.scss";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import ChatWindow from "../components/ChatWindow";
 
-export default function Dashobard() {
+export default function Friends() {
   const [session, loading] = useSession();
-  const [username, setUsername] = useState("");
   const router = useRouter();
 
   useEffect(() => {
@@ -15,20 +13,10 @@ export default function Dashobard() {
     }
   }, [loading, session]);
 
-  useEffect(async () => {
-    await getSession().then((res) => {
-      if (res !== null) {
-        setUsername(res.user.name);
-      } else {
-        router.push("/");
-      }
-    });
-  }, []);
-
   return (
     <div className={allStyles.container}>
-      <h1>Welcome, {username}</h1>
-      <ChatWindow username={username} />
+        <h1>Manage friends</h1>
+        
     </div>
   );
 }
