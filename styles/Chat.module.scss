@@ -28,7 +28,8 @@
 }
 
 .friendDiv,
-.utilityDiv {
+.utilityDiv,
+.activeDiv {
   padding: 10%;
   width: 100%;
   height: 10vh;
@@ -36,6 +37,20 @@
   text-align: center;
   overflow-y: auto;
   overflow-x: hidden;
+}
+
+.activeDiv {
+  background-color: rgb(209, 209, 209);
+}
+
+.friendsWindow, .utilityWindow {
+  div {
+    cursor: pointer;
+  }
+  
+  div:hover {
+    background-color: rgb(209, 209, 209);
+  }
 }
 
 .messageArea {

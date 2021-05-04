@@ -6,12 +6,12 @@ import { useRouter } from "next/router";
 import axios from "axios";
 
 function ChatWindow({ username }) {
+  const [token, setToken] = useState("");
+  const [friends, setFriends] = useState([]);
   const [responses, setResponses] = useState([]);
   const [roomsMap, setRoomsMap] = useState(new Map());
-  const [currentRecipient, setCurrentRecipient] = useState("");
-  const [token, setToken] = useState("");
   const [messageValue, setMessageValue] = useState("");
-  const [friends, setFriends] = useState([]);
+  const [currentRecipient, setCurrentRecipient] = useState("");
   const router = useRouter();
 
   useEffect(async () => {
@@ -103,6 +103,14 @@ function ChatWindow({ username }) {
     signOut();
   };
 
+  const checkIfActive = (givenUsername) => {
+    if (givenUsername === currentRecipient) {
+      return styles.activeDiv;
+    } else {
+      return styles.friendDiv;
+    }
+  }
+
   return (
     <div className={styles.chatContainer}>
       <div className={styles.sidePanel}>
@@ -118,10 +126,11 @@ function ChatWindow({ username }) {
         <div className={styles.friendsWindow}>
           {friends.map((friend) => (
             <div
-              className={styles.friendDiv}
+              className={checkIfActive(friend.username)}
               id={friend.id}
               name={friend.username}
               key={friend.id}
+              onClick={() => setCurrentRecipient(() => friend.username)}
             >
               {friend.username}
             </div>
