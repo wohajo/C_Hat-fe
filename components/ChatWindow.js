@@ -15,13 +15,14 @@ function ChatWindow({ username }) {
   const router = useRouter();
 
   useEffect(async () => {
-    await getSession().then((res) => {
-      if (res !== null) {
-        setToken(() => res.accessToken);
+    await getSession().then((res1) => {
+      if (res1 !== null) {
+        setToken(() => res1.accessToken);
+        console.log(res1.user.name);
         axios
           .get("http://localhost:8081/api/friends/my", {
             auth: {
-              username: res.accessToken,
+              username: res1.accessToken,
               password: "x",
             },
             headers: {
@@ -31,6 +32,10 @@ function ChatWindow({ username }) {
           })
           .then((res) => {
             setFriends(() => [...res.data.friends]);
+            res.data.friends.forEach((friend) => {
+              console.log(friend);
+              joinRoom(res1.accessToken, res1.user.name, friend.username);
+            });
           })
           .catch((err) => console.log(err));
       } else {
@@ -66,14 +71,14 @@ function ChatWindow({ username }) {
     setMessageValue("");
   };
 
-  const joinRoom = (recipient) => {
+  const joinRoom = (token, username, recipient) => {
     socket.emit("join", {
       token: token,
       username: username,
       recipient: recipient,
     });
 
-    setCurrentRoom(() => roomsMap.get(recipient));
+    setCurrentRecipient(() => roomsMap.get(recipient.key));
   };
 
   const leaveRoom = (recipient) => {
@@ -149,8 +154,10 @@ function ChatWindow({ username }) {
               name={friend.username}
               key={friend.id}
               onClick={() => {
-                getMessages(friend.id);
-                setCurrentRecipient(() => friend.username);
+                if (currentRecipient !== friend.username) {
+                  getMessages(friend.id);
+                  setCurrentRecipient(() => friend.username);  
+                }
               }}
             >
               {friend.username}
