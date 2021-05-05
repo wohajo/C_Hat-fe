@@ -15,14 +15,14 @@ function ChatWindow({ username }) {
   const router = useRouter();
 
   useEffect(async () => {
-    await getSession().then((res1) => {
-      if (res1 !== null) {
-        setToken(() => res1.accessToken);
-        console.log(res1.user.name);
+    await getSession().then((sessionRes) => {
+      if (sessionRes !== null) {
+        setToken(() => sessionRes.accessToken);
+        console.log(sessionRes.user.name);
         axios
           .get("http://localhost:8081/api/friends/my", {
             auth: {
-              username: res1.accessToken,
+              username: sessionRes.accessToken,
               password: "x",
             },
             headers: {
@@ -33,8 +33,11 @@ function ChatWindow({ username }) {
           .then((res) => {
             setFriends(() => [...res.data.friends]);
             res.data.friends.forEach((friend) => {
-              console.log(friend);
-              joinRoom(res1.accessToken, res1.user.name, friend.username);
+              joinRoom(
+                sessionRes.accessToken,
+                sessionRes.user.name,
+                friend.username
+              );
             });
           })
           .catch((err) => console.log(err));
@@ -63,6 +66,7 @@ function ChatWindow({ username }) {
       return;
     }
 
+    // socket.to(roomsMap.get(currentRecipient)).emit('room message');
     socket.emit("global message", {
       user_name: username,
       message: messageValue,
@@ -114,7 +118,7 @@ function ChatWindow({ username }) {
     } else {
       return styles.friendDiv;
     }
-  }
+  };
 
   const getMessages = async (userId) => {
     await axios
@@ -132,7 +136,7 @@ function ChatWindow({ username }) {
         setResponses(() => [...res.data.messages.datas]);
       })
       .catch((err) => console.log(err));
-  }
+  };
 
   return (
     <div className={styles.chatContainer}>
@@ -141,7 +145,10 @@ function ChatWindow({ username }) {
           <div onClick={() => signOutHandler()} className={styles.utilityDiv}>
             Log out
           </div>
-          <div onClick={() => router.push("/friends")} className={styles.utilityDiv}>
+          <div
+            onClick={() => router.push("/friends")}
+            className={styles.utilityDiv}
+          >
             {/* friends searching, addding, accepting/decilinig */}
             Friends
           </div>
@@ -156,7 +163,7 @@ function ChatWindow({ username }) {
               onClick={() => {
                 if (currentRecipient !== friend.username) {
                   getMessages(friend.id);
-                  setCurrentRecipient(() => friend.username);  
+                  setCurrentRecipient(() => friend.username);
                 }
               }}
             >
