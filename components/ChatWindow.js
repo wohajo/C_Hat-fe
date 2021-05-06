@@ -7,18 +7,20 @@ import axios from "axios";
 
 function ChatWindow({ username }) {
   const [token, setToken] = useState("");
+  const [userId, setUserId] = useState(0);
   const [friends, setFriends] = useState([]);
   const [responses, setResponses] = useState([]);
   const [roomsMap, setRoomsMap] = useState(new Map());
   const [messageValue, setMessageValue] = useState("");
   const [currentRecipient, setCurrentRecipient] = useState("");
+  const [currentRecipientId, setCurrentRecipientId] = useState(0);
   const router = useRouter();
 
   useEffect(async () => {
     await getSession().then((sessionRes) => {
       if (sessionRes !== null) {
         setToken(() => sessionRes.accessToken);
-        console.log(sessionRes.user.name);
+        setUserId(() => sessionRes.id);
         axios
           .get("http://localhost:8081/api/friends/my", {
             auth: {
@@ -36,7 +38,8 @@ function ChatWindow({ username }) {
               joinRoom(
                 sessionRes.accessToken,
                 sessionRes.user.name,
-                friend.username
+                friend.username,
+                friend.id
               );
             });
           })
@@ -48,14 +51,20 @@ function ChatWindow({ username }) {
   }, []);
 
   useEffect(() => {
-    socket.on("global response", (data) => {
-      setResponses((responses) => [...responses, data]);
+    socket.on("room response", (data) => {
+      console.log(data);
+      if (data.roomName === roomsMap.get(data.senderId) || data.roomName === roomsMap.get(data.receiverId)) {
+        setResponses((responses) => [...responses, data]);
+      } else {
+        // TODO show message from another user
+        console.log("message from another user");
+      }
     });
 
-    socket.on("room_name_response", (data) => {
-      console.log(`joined ${data.roomName} with ${data.recipient}`);
+    socket.on("room name response", (data) => {
       setCurrentRecipient(() => data.recipient);
-      setRoomsMap((roomsMap) => roomsMap.set(data.recipient, data.roomName));
+      setCurrentRecipientId(() => data.recipientId);
+      setRoomsMap((roomsMap) => roomsMap.set(data.recipientId, data.roomName));
     });
 
     return () => socket.close();
@@ -66,23 +75,30 @@ function ChatWindow({ username }) {
       return;
     }
 
-    // socket.to(roomsMap.get(currentRecipient)).emit('room message');
-    socket.emit("global message", {
-      user_name: username,
-      message: messageValue,
-      timestamp: Date.now(),
+    const receiver = friends.find(friend => friend.username === currentRecipient);
+
+    socket
+    .emit('room message', {
+      roomName: roomsMap.get(currentRecipientId),
+      sender: username,
+      senderId: userId,
+      receiver: currentRecipient,
+      receiverId: receiver.id,
+      contents: messageValue,
+      token: token
     });
     setMessageValue("");
   };
 
-  const joinRoom = (token, username, recipient) => {
+  const joinRoom = (token, username, recipient, recipientId) => {
     socket.emit("join", {
       token: token,
       username: username,
       recipient: recipient,
+      recipientId: recipientId
     });
 
-    setCurrentRecipient(() => roomsMap.get(recipient.key));
+    setCurrentRecipientId(() => roomsMap.get(recipient.key));
   };
 
   const leaveRoom = (recipient) => {
@@ -112,8 +128,8 @@ function ChatWindow({ username }) {
     signOut();
   };
 
-  const checkIfActive = (givenUsername) => {
-    if (givenUsername === currentRecipient) {
+  const checkIfActive = (givenId) => {
+    if (givenId === currentRecipientId) {
       return styles.activeDiv;
     } else {
       return styles.friendDiv;
@@ -156,14 +172,15 @@ function ChatWindow({ username }) {
         <div className={styles.friendsWindow}>
           {friends.map((friend) => (
             <div
-              className={checkIfActive(friend.username)}
+              className={checkIfActive(friend.id)}
               id={friend.id}
               name={friend.username}
               key={friend.id}
               onClick={() => {
-                if (currentRecipient !== friend.username) {
+                if (currentRecipientId !== friend.id) {
                   getMessages(friend.id);
                   setCurrentRecipient(() => friend.username);
+                  setCurrentRecipientId(() => friend.id);
                 }
               }}
             >
@@ -175,7 +192,7 @@ function ChatWindow({ username }) {
       <div className={styles.chatArea}>
         {responses.map((response) => (
           <p key={response.timestamp} className={checkUser(response.user_name)}>
-            {response.message}
+            {response.contents}
           </p>
         ))}
       </div>
