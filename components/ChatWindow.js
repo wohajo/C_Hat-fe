@@ -115,8 +115,8 @@ function ChatWindow({ username }) {
     setRoomsMap(() => newRooms);
   };
 
-  const checkUser = (userToCheck) => {
-    if (userToCheck === username) {
+  const checkUser = (userIdToCheck) => {
+    if (userIdToCheck === userId) {
       return styles.chatFromUser;
     } else {
       return styles.chatToUser;
@@ -191,7 +191,7 @@ function ChatWindow({ username }) {
       </div>
       <div className={styles.chatArea}>
         {responses.map((response) => (
-          <p key={response.timestamp} className={checkUser(response.user_name)}>
+          <p key={response.timestamp} className={checkUser(response.senderId)}>
             {response.contents}
           </p>
         ))}
