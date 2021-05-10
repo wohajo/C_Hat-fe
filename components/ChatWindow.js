@@ -13,7 +13,7 @@ function ChatWindow({ username }) {
   const [roomsMap, setRoomsMap] = useState(new Map());
   const [messageValue, setMessageValue] = useState("");
   const [currentRecipient, setCurrentRecipient] = useState("");
-  const [currentRecipientId, setCurrentRecipientId] = useState(0);
+  const [currentRecipientId, setCurrentRecipientId] = useState(-1);
   const router = useRouter();
 
   useEffect(async () => {
@@ -51,41 +51,55 @@ function ChatWindow({ username }) {
   }, []);
 
   useEffect(() => {
-    socket.on("room response", (data) => {
-      console.log(data);
-      if (data.roomName === roomsMap.get(data.senderId) || data.roomName === roomsMap.get(data.receiverId)) {
+    socket.on("room name response", (data) => {
+      setRoomsMap((roomsMap) => roomsMap.set(data.recipientId, data.roomName));
+    });
+    return () => socket.close();
+  }, []);
+
+  useEffect(() => {
+    console.log("\\/ received message \\/");
+
+    socket.on("room_response", (data) => {
+      areMessagesFromTheSameUser(data);
+    });
+    return () => socket.close();
+  }, []);
+
+  const areMessagesFromTheSameUser = (data) => {
+    console.log(`curr rec after response received: ${currentRecipientId}`);
+
+      if (
+        data.roomName === roomsMap.get(currentRecipientId) && data.senderId === currentRecipientId
+      ) {
         setResponses((responses) => [...responses, data]);
       } else {
         // TODO show message from another user
         console.log("message from another user");
       }
-    });
-
-    socket.on("room name response", (data) => {
-      setCurrentRecipient(() => data.recipient);
-      setCurrentRecipientId(() => data.recipientId);
-      setRoomsMap((roomsMap) => roomsMap.set(data.recipientId, data.roomName));
-    });
-
-    return () => socket.close();
-  }, []);
+  };
 
   const sendMessage = () => {
     if (messageValue.length < 1) {
       return;
     }
 
-    const receiver = friends.find(friend => friend.username === currentRecipient);
+    const receiver = friends.find(
+      (friend) => friend.username === currentRecipient
+    );
+    const receiverRoom = roomsMap.get(receiver.id);
+    console.log("/\\ sending message /\\");
+    console.log(receiver);
+    console.log(receiverRoom);
 
-    socket
-    .emit('room message', {
-      roomName: roomsMap.get(currentRecipientId),
+    socket.emit("room_message", {
+      roomName: receiverRoom,
       sender: username,
       senderId: userId,
       receiver: currentRecipient,
       receiverId: receiver.id,
       contents: messageValue,
-      token: token
+      token: token,
     });
     setMessageValue("");
   };
@@ -95,10 +109,8 @@ function ChatWindow({ username }) {
       token: token,
       username: username,
       recipient: recipient,
-      recipientId: recipientId
+      recipientId: recipientId,
     });
-
-    setCurrentRecipientId(() => roomsMap.get(recipient.key));
   };
 
   const leaveRoom = (recipient) => {
@@ -108,11 +120,7 @@ function ChatWindow({ username }) {
       recipient: recipient,
     });
 
-    const newRooms = roomsMap;
-    newRooms.delete(recipient);
     console.log(`left room with ${recipient}`);
-    newRooms.forEach((val, key) => console.log(`${val}:${key}`));
-    setRoomsMap(() => newRooms);
   };
 
   const checkUser = (userIdToCheck) => {
@@ -124,6 +132,10 @@ function ChatWindow({ username }) {
   };
 
   const signOutHandler = () => {
+    friends.forEach((friend) => {
+      leaveRoom(friend.username);
+    });
+    socket.disconnect();
     router.push("/");
     signOut();
   };
@@ -156,6 +168,7 @@ function ChatWindow({ username }) {
 
   return (
     <div className={styles.chatContainer}>
+      You are talking to a guy with id: {currentRecipientId}
       <div className={styles.sidePanel}>
         <div className={styles.utilityWindow}>
           <div onClick={() => signOutHandler()} className={styles.utilityDiv}>
@@ -179,9 +192,11 @@ function ChatWindow({ username }) {
               onClick={() => {
                 if (currentRecipientId !== friend.id) {
                   getMessages(friend.id);
-                  setCurrentRecipient(() => friend.username);
-                  setCurrentRecipientId(() => friend.id);
                 }
+                console.log("friend downloaded");
+                console.log(friend);
+                setCurrentRecipient(() => friend.username);
+                setCurrentRecipientId(() => friend.id);
               }}
             >
               {friend.username}
@@ -198,6 +213,7 @@ function ChatWindow({ username }) {
       </div>
       <div className={styles.messageArea}>
         <textarea
+          disabled={currentRecipientId === -1 ? true : false}
           className={styles.messageBox}
           id="message-box-contents"
           name="message-box-contents"
