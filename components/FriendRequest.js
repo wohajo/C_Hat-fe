@@ -1,10 +1,13 @@
 import React from "react";
 import styles from "../styles/FriendRequest.module.scss";
 import { useEffect, useState } from "react";
+import axios from "axios";
 
-function FriendRequest({ id, status, timestamp, sender, receiver, isPending }) {
+function FriendRequest({ id, status, timestamp, sender, receiver, isPending, token }) {
   const [username, setUsername] = useState("");
   const [name, setName] = useState("");
+  const REJECT = "reject";
+  const ACCEPT = "accept";
 
   useEffect(() => {
     if (isPending) {
@@ -16,12 +19,25 @@ function FriendRequest({ id, status, timestamp, sender, receiver, isPending }) {
     }
   });
 
+  const handleAction = (action) => {
+    axios.put(`http://localhost:8081/api/invites/${action}/${id}`, {}, {
+      auth: {
+        username: token,
+        password: "x",
+      },
+      headers: {
+        "Content-Type": "application/json;charset=UTF-8",
+        "Access-Control-Allow-Origin": "*",
+      },
+    }).then((res) => console.log(res));
+  }
+
   const checkIfPending = () => {
     if (isPending) {
       return (
         <div>
-          <button>A</button>
-          <button>R</button>
+          <button onClick={() => handleAction(ACCEPT)}>A</button>
+          <button onClick={() => handleAction(REJECT)}>R</button>
         </div>
       );
     } else {

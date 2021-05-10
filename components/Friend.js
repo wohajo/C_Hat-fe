@@ -1,19 +1,50 @@
 import React from "react";
 import styles from "../styles/FriendRequest.module.scss";
 import { useEffect, useState } from "react";
+import axios from "axios";
 
-function Friend({ id, firstName, lastName, username, isFound }) {
+function Friend({ id, firstName, lastName, username, isFound, userId, token }) {
   const [name, setName] = useState("");
 
   useEffect(() => {
     setName(() => firstName + lastName);
   });
 
+  const handleInvite = () => {
+    axios
+    .post(`http://localhost:8081/api/users/invite/${id}`, {}, {
+      auth: {
+        username: token,
+        password: "x",
+      },
+      headers: {
+        "Content-Type": "application/json;charset=UTF-8",
+        "Access-Control-Allow-Origin": "*",
+      },
+    })
+    .then((res) => console.log(res));
+  };
+
+  const handleDelete = () => {
+    axios
+    .delete(`http://localhost:8081/api/friends/remove/${id}`, {
+      auth: {
+        username: token,
+        password: "x",
+      },
+      headers: {
+        "Content-Type": "application/json;charset=UTF-8",
+        "Access-Control-Allow-Origin": "*",
+      },
+    })
+    .then((res) => console.log(res));
+  };
+
   const checkIfFound = () => {
     if (isFound) {
-      return <button>I</button>;
+      return <button onClick={() => handleInvite()}>I</button>;
     } else {
-      return <button>D</button>;
+      return <button onClick={() => handleDelete()}>D</button>;
     }
   };
 
