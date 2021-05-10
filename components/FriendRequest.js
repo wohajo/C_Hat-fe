@@ -9,7 +9,7 @@ function FriendRequest({ id, status, timestamp, sender, receiver, isPending }) {
   useEffect(() => {
     if (isPending) {
       setUsername(() => sender.username);
-      setName(() => sender.firstName + sender.lastName);
+      setName(() => `${sender.firstName} ${sender.lastName}`);
     } else {
       setUsername(() => receiver.username);
       setName(() => `${receiver.firstName} ${receiver.lastName}`);
@@ -24,6 +24,10 @@ function FriendRequest({ id, status, timestamp, sender, receiver, isPending }) {
           <button>R</button>
         </div>
       );
+    } else {
+      return <div>
+        <p>sent on {new Date(timestamp).toLocaleDateString()}</p>
+      </div>
     }
   };
 
