@@ -1,48 +1,54 @@
 .tabContainer {
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: 0.3fr 1.7fr;
-    gap: 0px 0px;
-    grid-template-areas:
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 0.3fr 1.7fr;
+  gap: 0px 0px;
+  grid-template-areas:
     "tabButtons"
     "tabs";
-    width: 80vw;
+  width: 80vw;
 }
 
-.tabButtons { 
-    display: flex;
-    grid-area: tabButtons; 
+.tabButtons {
+  display: flex;
+  grid-area: tabButtons;
 }
 
-.tabButton, .activeButton {
-    border: none;
-    background-color: white;
-    height: 100%;
-    width: 25%;
+.tabButton,
+.activeButton {
+  border: none;
+  background-color: white;
+  height: 100%;
+  width: 25%;
 }
 
 .activeButton {
-    border-bottom: 3px solid darkviolet;
-    font-weight: bold;
+  border-bottom: 3px solid darkviolet;
+  font-weight: bold;
 }
 
 .tabButton:hover {
-    border-bottom: 3px solid darkviolet;
-    font-weight: bold;
+  border-bottom: 3px solid darkviolet;
+  font-weight: bold;
 }
 
-.tabs { 
-    grid-area: tabs; 
-    height: 50vh;
-    // border: 1px solid black;
+.tabs {
+  grid-area: tabs;
+  height: 50vh;
+  // border: 1px solid black;
 }
 
-.tab, .activeTab {
-    width: 100%;
-    height: 100%;
-    display: none;
+.tab,
+.activeTab {
+  width: 100%;
+  height: 100%;
+  display: none;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 5px;
 }
 
 .activeTab {
-    display: block;
+  display: flex;
+  justify-content: center;
 }
