@@ -3,7 +3,15 @@ import styles from "../styles/FriendRequest.module.scss";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-function FriendRequest({ id, status, timestamp, sender, receiver, isPending, token }) {
+function FriendRequest({
+  id,
+  status,
+  timestamp,
+  sender,
+  receiver,
+  isPending,
+  token,
+}) {
   const [username, setUsername] = useState("");
   const [name, setName] = useState("");
   const REJECT = "reject";
@@ -20,17 +28,23 @@ function FriendRequest({ id, status, timestamp, sender, receiver, isPending, tok
   });
 
   const handleAction = (action) => {
-    axios.put(`http://localhost:8081/api/invites/${action}/${id}`, {}, {
-      auth: {
-        username: token,
-        password: "x",
-      },
-      headers: {
-        "Content-Type": "application/json;charset=UTF-8",
-        "Access-Control-Allow-Origin": "*",
-      },
-    }).then((res) => console.log(res));
-  }
+    axios
+      .put(
+        `http://localhost:8081/api/invites/${action}/${id}`,
+        {},
+        {
+          auth: {
+            username: token,
+            password: "x",
+          },
+          headers: {
+            "Content-Type": "application/json;charset=UTF-8",
+            "Access-Control-Allow-Origin": "*",
+          },
+        }
+      )
+      .then((res) => console.log(res));
+  };
 
   const checkIfPending = () => {
     if (isPending) {
@@ -41,9 +55,11 @@ function FriendRequest({ id, status, timestamp, sender, receiver, isPending, tok
         </div>
       );
     } else {
-      return <div>
-        <p>sent on {new Date(timestamp).toLocaleDateString()}</p>
-      </div>
+      return (
+        <div>
+          <p>sent on {new Date(timestamp).toLocaleDateString()}</p>
+        </div>
+      );
     }
   };
 

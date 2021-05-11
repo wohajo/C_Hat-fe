@@ -12,32 +12,36 @@ function Friend({ id, firstName, lastName, username, isFound, userId, token }) {
 
   const handleInvite = () => {
     axios
-    .post(`http://localhost:8081/api/users/invite/${id}`, {}, {
-      auth: {
-        username: token,
-        password: "x",
-      },
-      headers: {
-        "Content-Type": "application/json;charset=UTF-8",
-        "Access-Control-Allow-Origin": "*",
-      },
-    })
-    .then((res) => console.log(res));
+      .post(
+        `http://localhost:8081/api/users/invite/${id}`,
+        {},
+        {
+          auth: {
+            username: token,
+            password: "x",
+          },
+          headers: {
+            "Content-Type": "application/json;charset=UTF-8",
+            "Access-Control-Allow-Origin": "*",
+          },
+        }
+      )
+      .then((res) => console.log(res));
   };
 
   const handleDelete = () => {
     axios
-    .delete(`http://localhost:8081/api/friends/remove/${id}`, {
-      auth: {
-        username: token,
-        password: "x",
-      },
-      headers: {
-        "Content-Type": "application/json;charset=UTF-8",
-        "Access-Control-Allow-Origin": "*",
-      },
-    })
-    .then((res) => console.log(res));
+      .delete(`http://localhost:8081/api/friends/remove/${id}`, {
+        auth: {
+          username: token,
+          password: "x",
+        },
+        headers: {
+          "Content-Type": "application/json;charset=UTF-8",
+          "Access-Control-Allow-Origin": "*",
+        },
+      })
+      .then((res) => console.log(res));
   };
 
   const checkIfFound = () => {

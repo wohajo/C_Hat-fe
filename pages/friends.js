@@ -31,7 +31,7 @@ export default function Friends() {
         } else {
           router.push("/");
         }
-      })
+      });
     }
   }, [loading, session]);
 
@@ -40,101 +40,153 @@ export default function Friends() {
       if (tabName === currentTab) {
         return styles.activeButton;
       }
-      return styles.tabButton; 
+      return styles.tabButton;
     } else {
       if (tabName === currentTab) {
         return styles.activeTab;
       }
-      return styles.tab; 
+      return styles.tab;
     }
-  }
+  };
 
   const handleInvites = (option) => {
     setFriendsRequests(() => []);
     setCurrentTab(() => option);
     axios
-    .get(`http://localhost:8081/api/invites/my/${option}`, {
-      auth: {
-        username: token,
-        password: "x",
-      },
-      headers: {
-        "Content-Type": "application/json;charset=UTF-8",
-        "Access-Control-Allow-Origin": "*",
-      },
-    })
-    .then((res) => setFriendsRequests(() => [...res.data.invites]))
-  }
+      .get(`http://localhost:8081/api/invites/my/${option}`, {
+        auth: {
+          username: token,
+          password: "x",
+        },
+        headers: {
+          "Content-Type": "application/json;charset=UTF-8",
+          "Access-Control-Allow-Origin": "*",
+        },
+      })
+      .then((res) => setFriendsRequests(() => [...res.data.invites]));
+  };
 
   const handleMyFriends = () => {
     setFriends(() => []);
     setCurrentTab(() => "your");
     axios
-    .get("http://localhost:8081/api/friends/my", {
-      auth: {
-        username: token,
-        password: "x",
-      },
-      headers: {
-        "Content-Type": "application/json;charset=UTF-8",
-        "Access-Control-Allow-Origin": "*",
-      },
-    })
-    .then((res) => setFriends(() => [...res.data.friends]))
-  }
+      .get("http://localhost:8081/api/friends/my", {
+        auth: {
+          username: token,
+          password: "x",
+        },
+        headers: {
+          "Content-Type": "application/json;charset=UTF-8",
+          "Access-Control-Allow-Origin": "*",
+        },
+      })
+      .then((res) => setFriends(() => [...res.data.friends]));
+  };
 
   const SearchFriends = () => {
     axios
-    .get(`http://localhost:8081/api/users/find/${searchString}`, {
-      auth: {
-        username: token,
-        password: "x",
-      },
-      headers: {
-        "Content-Type": "application/json;charset=UTF-8",
-        "Access-Control-Allow-Origin": "*",
-      },
-    })
-    .then((res) => setFriends(() => [...res.data.users]))
-  }
+      .get(`http://localhost:8081/api/users/find/${searchString}`, {
+        auth: {
+          username: token,
+          password: "x",
+        },
+        headers: {
+          "Content-Type": "application/json;charset=UTF-8",
+          "Access-Control-Allow-Origin": "*",
+        },
+      })
+      .then((res) => setFriends(() => [...res.data.users]));
+  };
 
   const handleFind = () => {
     setCurrentTab(() => "find");
     setFriends(() => []);
     setSearchString(() => "");
-  }
+  };
 
   return (
     <div className={allStyles.container}>
       <h1>Manage friends</h1>
       <div className={styles.tabContainer}>
         <div className={styles.tabButtons}>
-          <button className={checkIfActive("find", "BTN")} onClick={handleFind}>Find</button>
-          <button className={checkIfActive("your", "BTN")} onClick={handleMyFriends}>Your friends</button>
-          <button className={checkIfActive("pending", "BTN")} onClick={() => handleInvites("pending")}>Pending invites</button>
-          <button className={checkIfActive("sent", "BTN")} onClick={() => handleInvites("sent")}>Sent invites</button>
+          <button className={checkIfActive("find", "BTN")} onClick={handleFind}>
+            Find
+          </button>
+          <button
+            className={checkIfActive("your", "BTN")}
+            onClick={handleMyFriends}
+          >
+            Your friends
+          </button>
+          <button
+            className={checkIfActive("pending", "BTN")}
+            onClick={() => handleInvites("pending")}
+          >
+            Pending invites
+          </button>
+          <button
+            className={checkIfActive("sent", "BTN")}
+            onClick={() => handleInvites("sent")}
+          >
+            Sent invites
+          </button>
         </div>
         <div className={styles.tabs}>
           <div className={checkIfActive("find", "TAB")} id={"find"}>
-            <input type="text" value={searchString} placeholder="Find by username" onChange={(e) => setSearchString(() => e.target.value)}/>
+            <input
+              type="text"
+              value={searchString}
+              placeholder="Find by username"
+              onChange={(e) => setSearchString(() => e.target.value)}
+            />
             <button onClick={SearchFriends}>Search</button>
             {friends.map((fr) => {
-              return <Friend isFound={true} key={fr.id} {...fr} userId={userId} token={token}/>
+              return (
+                <Friend
+                  isFound={true}
+                  key={fr.id}
+                  {...fr}
+                  userId={userId}
+                  token={token}
+                />
+              );
             })}
           </div>
           <div className={checkIfActive("your", "TAB")} id={"your"}>
             {friends.map((fr) => {
-              return <Friend isFound={false} key={fr.id} {...fr} userId={userId} token={token}/>
+              return (
+                <Friend
+                  isFound={false}
+                  key={fr.id}
+                  {...fr}
+                  userId={userId}
+                  token={token}
+                />
+              );
             })}
           </div>
           <div className={checkIfActive("pending", "TAB")} id={"pending"}>
             {friendsRequests.map((fr) => {
-              return <FriendRequest isPending={true} key={fr.id} {...fr} token={token}/>
+              return (
+                <FriendRequest
+                  isPending={true}
+                  key={fr.id}
+                  {...fr}
+                  token={token}
+                />
+              );
             })}
           </div>
           <div className={checkIfActive("sent", "TAB")} id={"sent"}>
             {friendsRequests.map((fr) => {
-              return <FriendRequest isPending={false} key={fr.id} {...fr} token={token}/>
+              return (
+                <FriendRequest
+                  isPending={false}
+                  key={fr.id}
+                  {...fr}
+                  token={token}
+                />
+              );
             })}
           </div>
         </div>
