@@ -4,6 +4,7 @@ import { getSession, signOut } from "next-auth/client";
 import { socket } from "./service/socket";
 import { useRouter } from "next/router";
 import axios from "axios";
+import { useCookies } from "react-cookie";
 
 function ChatWindow({ username }) {
   const [token, setToken] = useState("");
@@ -15,6 +16,9 @@ function ChatWindow({ username }) {
   const [messageValue, setMessageValue] = useState("");
   const [currentRecipient, setCurrentRecipient] = useState("");
   const [currentRecipientId, setCurrentRecipientId] = useState(-1);
+  const [cookies, setCookie] = useCookies(["name"]);
+  const random = require("random-bigint");
+
   const router = useRouter();
 
   useEffect(async () => {
@@ -66,20 +70,51 @@ function ChatWindow({ username }) {
   }, []);
 
   useEffect(() => {
-    if (responses.length === 0) return
+    if (responses.length === 0) return;
 
     const message = responses[responses.length - 1];
 
-    if (
-      message.roomName === roomsMap.get(currentRecipientId)
-    ) {
+    if (message.roomName === roomsMap.get(currentRecipientId)) {
       setMessages(() => [...messages, message]);
     } else {
       // TODO show message from another user
       console.log("message from another user");
     }
+  }, [responses]);
 
-  }, [responses])
+  useEffect(async () => {
+    if (cookies.privateKey === undefined || cookies.publicKey === undefined) {
+      var response = null;
+
+      await axios
+        .get("http://localhost:8081/api/encryption/base", {
+          auth: {
+            username: token,
+            password: "x",
+          },
+          headers: {
+            "Content-Type": "application/json;charset=UTF-8",
+            "Access-Control-Allow-Origin": "*",
+          },
+        })
+        .then((res) => (response = res.data))
+        .catch((err) => console.log(err));
+
+      const base = BigInt(response.base, 16);
+      const privateKey = random(response.base.toString(2).length);
+      const publicKey = privateKey * base;
+
+      console.log(`base from res: ${response.base}`);
+      console.log(`base: ${base.toString(16)}`);
+      console.log(`private key: ${privateKey.toString(16)}`);
+      console.log(`public key: ${(privateKey * base).toString(16)}`);
+
+      setCookie("privateKey", privateKey.toString(16), { path: "/" });
+      setCookie("publicKey", publicKey.toString(16), { path: "/" });
+    }
+
+    console.log(cookies);
+  });
 
   const sendMessage = () => {
     if (messageValue.length < 1) {

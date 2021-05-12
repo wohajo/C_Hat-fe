@@ -14,9 +14,12 @@
     "easy-peasy": "^5.0.3",
     "next": "10.0.8",
     "next-auth": "^3.13.3",
+    "random-bigint": "^0.0.1",
     "react": "17.0.1",
+    "react-cookie": "^4.0.3",
     "react-dom": "17.0.1",
-    "sass": "^1.32.8"
+    "sass": "^1.32.8",
+    "socket.io-client": "^4.1.1"
   },
   "devDependencies": {
     "prettier": "2.2.1"
