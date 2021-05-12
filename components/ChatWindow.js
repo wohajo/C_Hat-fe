@@ -22,11 +22,57 @@ function ChatWindow({ username }) {
   const router = useRouter();
 
   useEffect(async () => {
-    await getSession().then((sessionRes) => {
+    await getSession().then(async (sessionRes) => {
       if (sessionRes !== null) {
         setToken(() => sessionRes.accessToken);
         setUserId(() => sessionRes.id);
-        axios
+
+        if (
+          cookies.privateKey === undefined ||
+          cookies.publicKey === undefined
+        ) {
+          await axios
+            .get("http://localhost:8081/api/encryption/base", {
+              auth: {
+                username: sessionRes.accessToken,
+                password: "x",
+              },
+              headers: {
+                "Content-Type": "application/json;charset=UTF-8",
+                "Access-Control-Allow-Origin": "*",
+              },
+            })
+            .then((res) => {
+              const base = BigInt(res.data.base, 16);
+              const privateKey = random(res.data.base.toString(2).length);
+              const publicKey = privateKey * base;
+
+              setCookie("privateKey", `0x${privateKey.toString(16)}`, {
+                path: "/",
+              });
+              setCookie("publicKey", `0x${publicKey.toString(16)}`, {
+                path: "/",
+              });
+
+              axios.put(
+                `http://localhost:8081/api/encryption/update-public-key/${sessionRes.id}`,
+                { publicKey: `0x${publicKey.toString(16)}` },
+                {
+                  auth: {
+                    username: sessionRes.accessToken,
+                    password: "x",
+                  },
+                  headers: {
+                    "Content-Type": "application/json;charset=UTF-8",
+                    "Access-Control-Allow-Origin": "*",
+                  },
+                }
+              );
+            })
+            .catch((err) => console.log(err));
+        }
+
+        await axios
           .get("http://localhost:8081/api/friends/my", {
             auth: {
               username: sessionRes.accessToken,
@@ -46,6 +92,27 @@ function ChatWindow({ username }) {
                 friend.username,
                 friend.id
               );
+
+              const friendUsername = friend.username;
+
+              if (cookies.friendUsername === undefined) {
+                console.log(`setting cookie for ${friendUsername}`);
+                console.log(`friends public key: ${friend.publicKey}`);
+
+                // TODO handle when friend has no public key yet
+                // TODO also handle first login, cause cookies.privateKey is not seen yet for this function
+                const friendPublicKey = BigInt(friend.publicKey, 16);
+                const myPrivateKey = BigInt(cookies.privateKey, 16);
+                const sharedSecret = friendPublicKey * myPrivateKey;
+
+                console.log(
+                  `sharedSecret with ${friendUsername}: ${sharedSecret}`
+                );
+
+                setCookie(friendUsername, `0x${sharedSecret.toString(16)}`, {
+                  path: "/",
+                });
+              }
             });
           })
           .catch((err) => console.log(err));
@@ -81,40 +148,6 @@ function ChatWindow({ username }) {
       console.log("message from another user");
     }
   }, [responses]);
-
-  useEffect(async () => {
-    if (cookies.privateKey === undefined || cookies.publicKey === undefined) {
-      var response = null;
-
-      await axios
-        .get("http://localhost:8081/api/encryption/base", {
-          auth: {
-            username: token,
-            password: "x",
-          },
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8",
-            "Access-Control-Allow-Origin": "*",
-          },
-        })
-        .then((res) => (response = res.data))
-        .catch((err) => console.log(err));
-
-      const base = BigInt(response.base, 16);
-      const privateKey = random(response.base.toString(2).length);
-      const publicKey = privateKey * base;
-
-      console.log(`base from res: ${response.base}`);
-      console.log(`base: ${base.toString(16)}`);
-      console.log(`private key: ${privateKey.toString(16)}`);
-      console.log(`public key: ${(privateKey * base).toString(16)}`);
-
-      setCookie("privateKey", privateKey.toString(16), { path: "/" });
-      setCookie("publicKey", publicKey.toString(16), { path: "/" });
-    }
-
-    console.log(cookies);
-  });
 
   const sendMessage = () => {
     if (messageValue.length < 1) {
