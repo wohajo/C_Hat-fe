@@ -28,6 +28,10 @@ export default function Dashobard() {
   return (
     <div className={allStyles.container}>
       <h1>Welcome, {username}</h1>
+      <h6>
+        If You see 🔒 in messages, one of You just changed encryption key and
+        You both need to reload page in order to see new messages.
+      </h6>
       <ChatWindow username={username} />
     </div>
   );

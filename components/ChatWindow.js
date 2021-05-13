@@ -289,11 +289,16 @@ function ChatWindow({ username }) {
         {currentRecipient === undefined ? (
           <div></div>
         ) : (
-          messages.map((message) => (
-            <p key={message.timestamp} className={checkUser(message.senderId)}>
-              {decryptString(message.contents, cookies[currentRecipient])}
-            </p>
-          ))
+          messages.map((message) => {
+            return (
+              <p
+                key={message.timestamp}
+                className={checkUser(message.senderId)}
+              >
+                {decryptString(message.contents, cookies[currentRecipient])}
+              </p>
+            );
+          })
         )}
       </div>
       <div className={styles.messageArea}>
