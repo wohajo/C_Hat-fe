@@ -152,7 +152,15 @@ function ChatWindow({ username }) {
     const message = responses[responses.length - 1];
 
     if (message.roomName === roomsMap.get(currentRecipientId)) {
-      setMessages(() => [...messages, message]);
+      setMessages(() => [
+        ...messages,
+        {
+          contents: decryptString(message.contents, cookies[currentRecipient]),
+          receiverId: message.receiverId,
+          senderId: message.senderId,
+          timestamp: message.timestamp,
+        },
+      ]);
     } else {
       // TODO show message from another user
       console.log("message from another user");
@@ -168,13 +176,11 @@ function ChatWindow({ username }) {
       (friend) => friend.username === currentRecipient
     );
     const receiverRoom = roomsMap.get(receiver.id);
-    console.log(`sending ${cookies[currentRecipient]}`);
 
     const encryptedMessageString = encryptString(
       messageValue,
       cookies[currentRecipient]
     );
-    console.log(encryptedMessageString);
 
     socket.emit("room_message", {
       roomName: receiverRoom,
@@ -232,7 +238,7 @@ function ChatWindow({ username }) {
     }
   };
 
-  const getMessages = async (userId) => {
+  const getMessages = async (userId, username) => {
     await axios
       .get(`http://localhost:8081/api/messages/with/${userId}/1`, {
         auth: {
@@ -245,7 +251,17 @@ function ChatWindow({ username }) {
         },
       })
       .then((res) => {
-        setMessages(() => [...res.data.messages.datas]);
+        let msgs = [];
+        res.data.messages.datas.forEach((msg) => {
+          msgs.push({
+            contents: decryptString(msg.contents, cookies[username]),
+            receiverId: msg.receiverId,
+            senderId: msg.senderId,
+            timestamp: msg.timestamp,
+          });
+        });
+
+        setMessages(() => [...msgs]);
       })
       .catch((err) => console.log(err));
   };
@@ -274,7 +290,7 @@ function ChatWindow({ username }) {
               key={friend.id}
               onClick={() => {
                 if (currentRecipientId !== friend.id) {
-                  getMessages(friend.id);
+                  getMessages(friend.id, friend.username);
                 }
                 setCurrentRecipient(() => friend.username);
                 setCurrentRecipientId(() => friend.id);
@@ -295,7 +311,7 @@ function ChatWindow({ username }) {
                 key={message.timestamp}
                 className={checkUser(message.senderId)}
               >
-                {decryptString(message.contents, cookies[currentRecipient])}
+                {message.contents}
               </p>
             );
           })
