@@ -5,6 +5,7 @@ import { socket } from "./service/socket";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { useCookies } from "react-cookie";
+import { decryptString, encryptString } from "./service/utlis";
 
 function ChatWindow({ username }) {
   const [token, setToken] = useState("");
@@ -16,110 +17,119 @@ function ChatWindow({ username }) {
   const [messageValue, setMessageValue] = useState("");
   const [currentRecipient, setCurrentRecipient] = useState("");
   const [currentRecipientId, setCurrentRecipientId] = useState(-1);
-  const [cookies, setCookie] = useCookies(["name"]);
+  const [cookies, setCookie] = useCookies([]);
+
   const random = require("random-bigint");
 
   const router = useRouter();
 
   useEffect(async () => {
+    var resToken = "";
+    var resId = "";
+    var resUsername = "";
+    var resBase = cookies.base;
+    var privateKey = cookies.privateKey;
+    var publicKey = cookies.publicKey;
+
     await getSession().then(async (sessionRes) => {
       if (sessionRes !== null) {
+        resToken = sessionRes.accessToken;
+        resId = sessionRes.id;
+        resUsername = sessionRes.user.name;
         setToken(() => sessionRes.accessToken);
         setUserId(() => sessionRes.id);
-
-        if (
-          cookies.privateKey === undefined ||
-          cookies.publicKey === undefined
-        ) {
-          await axios
-            .get("http://localhost:8081/api/encryption/base", {
-              auth: {
-                username: sessionRes.accessToken,
-                password: "x",
-              },
-              headers: {
-                "Content-Type": "application/json;charset=UTF-8",
-                "Access-Control-Allow-Origin": "*",
-              },
-            })
-            .then((res) => {
-              const base = BigInt(res.data.base, 16);
-              const privateKey = random(res.data.base.toString(2).length);
-              const publicKey = privateKey * base;
-
-              setCookie("privateKey", `0x${privateKey.toString(16)}`, {
-                path: "/",
-              });
-              setCookie("publicKey", `0x${publicKey.toString(16)}`, {
-                path: "/",
-              });
-
-              axios.put(
-                `http://localhost:8081/api/encryption/update-public-key/${sessionRes.id}`,
-                { publicKey: `0x${publicKey.toString(16)}` },
-                {
-                  auth: {
-                    username: sessionRes.accessToken,
-                    password: "x",
-                  },
-                  headers: {
-                    "Content-Type": "application/json;charset=UTF-8",
-                    "Access-Control-Allow-Origin": "*",
-                  },
-                }
-              );
-            })
-            .catch((err) => console.log(err));
-        }
-
-        await axios
-          .get("http://localhost:8081/api/friends/my", {
-            auth: {
-              username: sessionRes.accessToken,
-              password: "x",
-            },
-            headers: {
-              "Content-Type": "application/json;charset=UTF-8",
-              "Access-Control-Allow-Origin": "*",
-            },
-          })
-          .then((res) => {
-            setFriends(() => [...res.data.friends]);
-            res.data.friends.forEach((friend) => {
-              joinRoom(
-                sessionRes.accessToken,
-                sessionRes.user.name,
-                friend.username,
-                friend.id
-              );
-
-              const friendUsername = friend.username;
-
-              if (cookies.friendUsername === undefined) {
-                console.log(`setting cookie for ${friendUsername}`);
-                console.log(`friends public key: ${friend.publicKey}`);
-
-                // TODO handle when friend has no public key yet
-                // TODO also handle first login, cause cookies.privateKey is not seen yet for this function
-                const friendPublicKey = BigInt(friend.publicKey, 16);
-                const myPrivateKey = BigInt(cookies.privateKey, 16);
-                const sharedSecret = friendPublicKey * myPrivateKey;
-
-                console.log(
-                  `sharedSecret with ${friendUsername}: ${sharedSecret}`
-                );
-
-                setCookie(friendUsername, `0x${sharedSecret.toString(16)}`, {
-                  path: "/",
-                });
-              }
-            });
-          })
-          .catch((err) => console.log(err));
       } else {
         router.push("/");
       }
     });
+
+    await axios
+      .get("http://localhost:8081/api/encryption/base", {
+        auth: {
+          username: resToken,
+          password: "x",
+        },
+        headers: {
+          "Content-Type": "application/json;charset=UTF-8",
+          "Access-Control-Allow-Origin": "*",
+        },
+      })
+      .then((res) => {
+        if (cookies.base === undefined || cookies.base !== res.data.base) {
+          setCookie("base", res.data.base, { path: "/" });
+          resBase = res.data.base;
+        }
+      })
+      .catch((err) => console.log(err));
+
+    if (cookies.base !== resBase) {
+      const base = BigInt(resBase, 16);
+      privateKey = random(resBase.toString(2).length);
+      publicKey = privateKey * base;
+
+      setCookie("privateKey", `0x${privateKey.toString(16)}`, {
+        path: "/",
+      });
+      setCookie("publicKey", `0x${publicKey.toString(16)}`, {
+        path: "/",
+      });
+
+      axios.put(
+        `http://localhost:8081/api/encryption/update-public-key/${resId}`,
+        { publicKey: `0x${publicKey.toString(16)}` },
+        {
+          auth: {
+            username: resToken,
+            password: "x",
+          },
+          headers: {
+            "Content-Type": "application/json;charset=UTF-8",
+            "Access-Control-Allow-Origin": "*",
+          },
+        }
+      );
+    }
+
+    await axios
+      .get("http://localhost:8081/api/friends/my", {
+        auth: {
+          username: resToken,
+          password: "x",
+        },
+        headers: {
+          "Content-Type": "application/json;charset=UTF-8",
+          "Access-Control-Allow-Origin": "*",
+        },
+      })
+      .then((res) => {
+        res.data.friends.forEach((friend) => {
+          const friendUsername = friend.username;
+
+          if (
+            friend.publicKey !== "" ||
+            friend.publicKey !== null ||
+            friend.publicKey !== undefined
+          ) {
+            console.log(`setting cookie for ${friendUsername}`);
+            console.log(`friends public key: ${friend.publicKey}`);
+
+            const friendPublicKey = BigInt(friend.publicKey, 16);
+            const myPrivateKey = BigInt(privateKey, 16);
+            const sharedSecret = friendPublicKey * myPrivateKey;
+
+            console.log(`sharedSecret with ${friendUsername}: ${sharedSecret}`);
+
+            setCookie(friendUsername, `0x${sharedSecret.toString(16)}`, {
+              path: "/",
+            });
+
+            joinRoom(resToken, resUsername, friend.username, friend.id);
+
+            setFriends((friends) => [...friends, friend]);
+          }
+        });
+      })
+      .catch((err) => console.log(err));
   }, []);
 
   useEffect(() => {
@@ -158,6 +168,13 @@ function ChatWindow({ username }) {
       (friend) => friend.username === currentRecipient
     );
     const receiverRoom = roomsMap.get(receiver.id);
+    console.log(`sending ${cookies[currentRecipient]}`);
+
+    const encryptedMessageString = encryptString(
+      messageValue,
+      cookies[currentRecipient]
+    );
+    console.log(encryptedMessageString);
 
     socket.emit("room_message", {
       roomName: receiverRoom,
@@ -165,7 +182,7 @@ function ChatWindow({ username }) {
       senderId: userId,
       receiver: currentRecipient,
       receiverId: receiver.id,
-      contents: messageValue,
+      contents: encryptedMessageString,
       token: token,
     });
     setMessageValue("");
@@ -269,11 +286,15 @@ function ChatWindow({ username }) {
         </div>
       </div>
       <div className={styles.chatArea}>
-        {messages.map((response) => (
-          <p key={response.timestamp} className={checkUser(response.senderId)}>
-            {response.contents}
-          </p>
-        ))}
+        {currentRecipient === undefined ? (
+          <div></div>
+        ) : (
+          messages.map((message) => (
+            <p key={message.timestamp} className={checkUser(message.senderId)}>
+              {decryptString(message.contents, cookies[currentRecipient])}
+            </p>
+          ))
+        )}
       </div>
       <div className={styles.messageArea}>
         <textarea
@@ -294,7 +315,11 @@ function ChatWindow({ username }) {
         ></textarea>
       </div>
       <div className={styles.buttonsArea}>
-        <button className={styles.sendButton} onClick={sendMessage}>
+        <button
+          className={styles.sendButton}
+          onClick={sendMessage}
+          disabled={currentRecipientId === -1 ? true : false}
+        >
           Send
         </button>
       </div>

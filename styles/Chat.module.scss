@@ -87,6 +87,10 @@
   cursor: pointer;
 }
 
+.sendButton:disabled {
+  background-color: rgb(146, 143, 148);
+}
+
 .chatFromUser,
 .chatToUser {
   padding: 10px;
