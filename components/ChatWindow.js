@@ -143,6 +143,17 @@ function ChatWindow({ username }) {
     socket.on("room_response", (data) => {
       setResponses((responses) => [...responses, data]);
     });
+
+    socket.on("sid", (data) => {
+      getSession().then(async (sessionRes) => {
+        if (sessionRes !== null)
+          socket.emit("sid_event", {
+            sid: data.sid,
+            username: sessionRes.user.name,
+          });
+      });
+    });
+
     return () => socket.close();
   }, []);
 
