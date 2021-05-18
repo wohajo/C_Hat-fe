@@ -10,6 +10,12 @@
     "sidePanel messageArea messageArea buttonsArea";
 }
 
+@media only screen and (max-width: 600px) {
+  .chatContainer {
+    width: 100%;
+  }
+}
+
 .chatArea {
   grid-area: chatArea;
   height: 100%;
