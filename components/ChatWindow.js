@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import { useState, useEffect, useCallback } from "react";
 import styles from "../styles/Chat.module.scss";
 import { getSession, signOut } from "next-auth/client";
 import { socket } from "./service/socket";
@@ -6,6 +7,7 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import { useCookies } from "react-cookie";
 import { decryptString, encryptString } from "./service/utlis";
+import { Toast, Form, Button, FormControl, InputGroup } from "react-bootstrap";
 
 function ChatWindow({ username }) {
   const [token, setToken] = useState("");
@@ -18,6 +20,7 @@ function ChatWindow({ username }) {
   const [currentRecipient, setCurrentRecipient] = useState("");
   const [currentRecipientId, setCurrentRecipientId] = useState(-1);
   const [cookies, setCookie] = useCookies([]);
+  const [showToast, setShowToast] = useState(false);
 
   const random = require("random-bigint");
 
@@ -177,8 +180,7 @@ function ChatWindow({ username }) {
         },
       ]);
     } else {
-      // TODO show message from another user
-      console.log("message from another user");
+      setShowToast(() => true);
     }
   }, [responses]);
 
@@ -206,7 +208,7 @@ function ChatWindow({ username }) {
       contents: encryptedMessageString,
       token: token,
     });
-    setMessageValue("");
+    setMessageValue(() => "");
   };
 
   const joinRoom = (token, username, recipient, recipientId) => {
@@ -288,84 +290,88 @@ function ChatWindow({ username }) {
   };
 
   return (
-    <div className={styles.chatContainer}>
-      <div className={styles.sidePanel}>
-        <div className={styles.utilityWindow}>
-          <div onClick={() => signOutHandler()} className={styles.utilityDiv}>
-            Log out
-          </div>
-          <div
-            onClick={() => router.push("/friends")}
-            className={styles.utilityDiv}
-          >
-            {/* friends searching, addding, accepting/decilinig */}
-            Friends
-          </div>
-        </div>
-        <div className={styles.friendsWindow}>
-          {friends.map((friend) => (
-            <div
-              className={checkIfActive(friend.id)}
-              id={friend.id}
-              name={friend.username}
-              key={friend.id}
-              onClick={() => {
-                if (currentRecipientId !== friend.id) {
-                  getMessages(friend.id, friend.username);
-                }
-                setCurrentRecipient(() => friend.username);
-                setCurrentRecipientId(() => friend.id);
-              }}
-            >
-              {friend.username}
+    <>
+      <div className={styles.chatContainer}>
+        <div className={styles.sidePanel}>
+          <div className={styles.utilityWindow}>
+            <div onClick={() => signOutHandler()} className={styles.utilityDiv}>
+              Log out
             </div>
-          ))}
+            <div
+              onClick={() => router.push("/friends")}
+              className={styles.utilityDiv}
+            >
+              Friends
+            </div>
+          </div>
+          <div className={styles.friendsWindow}>
+            {friends.map((friend) => (
+              <div
+                className={checkIfActive(friend.id)}
+                id={friend.id}
+                name={friend.username}
+                key={friend.id}
+                onClick={() => {
+                  if (currentRecipientId !== friend.id) {
+                    getMessages(friend.id, friend.username);
+                  }
+                  setCurrentRecipient(() => friend.username);
+                  setCurrentRecipientId(() => friend.id);
+                }}
+              >
+                {friend.username}
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className={styles.chatArea}>
+          {currentRecipient === undefined ? (
+            <div></div>
+          ) : (
+            messages.map((message) => {
+              return (
+                <p
+                  key={message.timestamp}
+                  className={checkUser(message.senderId)}
+                >
+                  {message.contents}
+                </p>
+              );
+            })
+          )}
+        </div>
+        <div className={styles.messageArea}>
+          <Form
+            onSubmit={(e) => {
+              e.preventDefault();
+              sendMessage();
+            }}
+            inline
+          >
+            <InputGroup className="mb-3">
+              <FormControl
+                disabled={currentRecipientId === -1 ? true : false}
+                placeholder="Message"
+                value={messageValue}
+                onChange={(e) => {
+                  setMessageValue(e.target.value);
+                }}
+              />
+              <InputGroup.Append>
+                <Button
+                  disabled={currentRecipientId === -1 ? true : false}
+                  variant="dark"
+                  id="send-button"
+                  type="submit"
+                >
+                  Send
+                </Button>
+              </InputGroup.Append>
+            </InputGroup>
+          </Form>
         </div>
       </div>
-      <div className={styles.chatArea}>
-        {currentRecipient === undefined ? (
-          <div></div>
-        ) : (
-          messages.map((message) => {
-            return (
-              <p
-                key={message.timestamp}
-                className={checkUser(message.senderId)}
-              >
-                {message.contents}
-              </p>
-            );
-          })
-        )}
-      </div>
-      <div className={styles.messageArea}>
-        <textarea
-          disabled={currentRecipientId === -1 ? true : false}
-          className={styles.messageBox}
-          id="message-box-contents"
-          name="message-box-contents"
-          placeholder="Type a message..."
-          value={messageValue}
-          onChange={(e) => {
-            setMessageValue(e.target.value);
-          }}
-          onKeyUp={(event) => {
-            if (event.key === "Enter" && !event.shiftKey) {
-              sendMessage();
-            }
-          }}
-        ></textarea>
-      </div>
-      <div className={styles.buttonsArea}>
-        <button
-          className={styles.sendButton}
-          onClick={sendMessage}
-          disabled={currentRecipientId === -1 ? true : false}
-        >
-          Send
-        </button>
-      </div>
-    </div>
+    </>
   );
 }
 

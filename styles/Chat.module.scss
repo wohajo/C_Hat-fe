@@ -3,11 +3,11 @@
   width: 80%;
   display: grid;
   grid-template-columns: 0.6fr 0.6fr 1.2fr 0.6fr;
-  grid-template-rows: 1.7fr 0.3fr;
+  grid-template-rows: 1.9fr 0.1fr;
   gap: 0px 0px;
   grid-template-areas:
     "sidePanel chatArea chatArea chatArea"
-    "sidePanel messageArea messageArea buttonsArea";
+    "sidePanel messageArea messageArea messageArea";
 }
 
 @media only screen and (max-width: 600px) {
@@ -20,7 +20,6 @@
   grid-area: chatArea;
   height: 100%;
   width: 100%;
-  background-color: rgb(231, 231, 231);
   padding-left: 5px;
   padding-right: 5px;
   overflow-y: auto;
@@ -29,8 +28,6 @@
 
 .sidePanel {
   grid-area: sidePanel;
-  background-color: rgb(231, 231, 231);
-  border-right: 1px solid rgb(209, 209, 209);
 }
 
 .friendDiv,

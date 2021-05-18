@@ -106,7 +106,8 @@ export default function Friends() {
 
   return (
     <div className={allStyles.container}>
-      <span onClick={() => router.push("/dashboard")}>go back</span> <h1>Manage friends</h1>
+      <span onClick={() => router.push("/dashboard")}>go back</span>{" "}
+      <h1>Manage friends</h1>
       <div className={styles.tabContainer}>
         <div className={styles.tabButtons}>
           <button className={checkIfActive("find", "BTN")} onClick={handleFind}>
