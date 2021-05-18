@@ -1,6 +1,7 @@
 import axios from "axios";
 
 export default async function userHandler(req, res) {
+  const HOST_API = "http://localhost:8081/api/";
   let axiosConfig = {
     headers: {
       "Content-Type": "application/json;charset=UTF-8",
@@ -16,7 +17,7 @@ export default async function userHandler(req, res) {
   switch (method) {
     case "POST":
       await axios
-        .post("http://localhost:8081/api/users/register", req.body, axiosConfig)
+        .post(`${HOST_API}users/register`, req.body, axiosConfig)
         .then((serverResponse) => {
           res.status(200).json(serverResponse.data);
           res.end();

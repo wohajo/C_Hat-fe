@@ -16,3 +16,22 @@ export function decryptString(message, key) {
     return "🔒";
   }
 }
+
+export function truncate(str, n) {
+  return str.length > n ? str.substr(0, n - 1) + "&hellip;" : str;
+}
+
+export function axiosAuthConfig(token) {
+  return {
+    auth: {
+      username: token,
+      password: "x",
+    },
+    headers: {
+      "Content-Type": "application/json;charset=UTF-8",
+      "Access-Control-Allow-Origin": "*",
+    },
+  };
+}
+
+export const HOST_API = process.env.HOST_API;

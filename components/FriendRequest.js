@@ -16,6 +16,7 @@ function FriendRequest({
   const [name, setName] = useState("");
   const REJECT = "reject";
   const ACCEPT = "accept";
+  const HOST_API = "http://localhost:8081/api/";
 
   useEffect(() => {
     if (isPending) {
@@ -30,7 +31,7 @@ function FriendRequest({
   const handleAction = (action) => {
     axios
       .put(
-        `http://localhost:8081/api/invites/${action}/${id}`,
+        `${HOST_API}invites/${action}/${id}`,
         {},
         {
           auth: {

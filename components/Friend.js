@@ -5,6 +5,7 @@ import axios from "axios";
 
 function Friend({ id, firstName, lastName, username, isFound, userId, token }) {
   const [name, setName] = useState("");
+  const HOST_API = "http://localhost:8081/api/";
 
   useEffect(() => {
     setName(() => firstName + lastName);
@@ -13,7 +14,7 @@ function Friend({ id, firstName, lastName, username, isFound, userId, token }) {
   const handleInvite = () => {
     axios
       .post(
-        `http://localhost:8081/api/users/invite/${id}`,
+        `${HOST_API}users/invite/${id}`,
         {},
         {
           auth: {
@@ -31,7 +32,7 @@ function Friend({ id, firstName, lastName, username, isFound, userId, token }) {
 
   const handleDelete = () => {
     axios
-      .delete(`http://localhost:8081/api/friends/remove/${id}`, {
+      .delete(`${HOST_API}friends/remove/${id}`, {
         auth: {
           username: token,
           password: "x",

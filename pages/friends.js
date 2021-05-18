@@ -18,6 +18,7 @@ export default function Friends() {
   const [friends, setFriends] = useState([]);
   const [searchString, setSearchString] = useState("");
   const router = useRouter();
+  const HOST_API = "http://localhost:8081/api/";
 
   useEffect(async () => {
     if (!loading && !session?.accessToken) {
@@ -53,7 +54,7 @@ export default function Friends() {
     setFriendsRequests(() => []);
     setCurrentTab(() => option);
     axios
-      .get(`http://localhost:8081/api/invites/my/${option}`, {
+      .get(`${HOST_API}invites/my/${option}`, {
         auth: {
           username: token,
           password: "x",
@@ -70,7 +71,7 @@ export default function Friends() {
     setFriends(() => []);
     setCurrentTab(() => "your");
     axios
-      .get("http://localhost:8081/api/friends/my", {
+      .get(`${HOST_API}friends/my`, {
         auth: {
           username: token,
           password: "x",
@@ -85,7 +86,7 @@ export default function Friends() {
 
   const SearchFriends = () => {
     axios
-      .get(`http://localhost:8081/api/users/find/${searchString}`, {
+      .get(`${HOST_API}users/find/${searchString}`, {
         auth: {
           username: token,
           password: "x",

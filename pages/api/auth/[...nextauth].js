@@ -17,11 +17,8 @@ const providers = [
       };
 
       try {
-        const user = await axios.post(
-          "http://localhost:8081/api/auth/login",
-          {},
-          axiosConfig
-        );
+        const HOST_API = "http://localhost:8081/api/";
+        const user = await axios.post(`${HOST_API}auth/login`, {}, axiosConfig);
         if (user) {
           return { status: "success", data: user.data };
         }

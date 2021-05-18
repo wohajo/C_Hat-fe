@@ -1,15 +1,15 @@
 import React from "react";
-import { useState, useEffect, useCallback } from "react";
+import axios from "axios";
+import ChatArea from "./ChatArea";
+import MessageForm from "./MessageForm";
+import FriendsList from "./FriendsList";
+import { useRouter } from "next/router";
+import { useCookies } from "react-cookie";
+import { socket } from "./service/socket";
+import { useState, useEffect } from "react";
+import { axiosAuthConfig, decryptString } from "./service/utlis";
 import styles from "../styles/Chat.module.scss";
 import { getSession, signOut } from "next-auth/client";
-import { socket } from "./service/socket";
-import { useRouter } from "next/router";
-import axios from "axios";
-import { useCookies } from "react-cookie";
-import { decryptString, encryptString } from "./service/utlis";
-import MessageForm from "./MessageForm";
-import ChatArea from "./ChatArea";
-import { Toast, Form, Button, FormControl, InputGroup } from "react-bootstrap";
 
 function ChatWindow({ username }) {
   const [token, setToken] = useState("");
@@ -22,6 +22,7 @@ function ChatWindow({ username }) {
   const [currentRecipientId, setCurrentRecipientId] = useState(-1);
   const [cookies, setCookie] = useCookies([]);
   const [showToast, setShowToast] = useState(false);
+  const HOST_API = "http://localhost:8081/api/";
 
   const random = require("random-bigint");
 
@@ -48,16 +49,7 @@ function ChatWindow({ username }) {
     });
 
     await axios
-      .get("http://localhost:8081/api/encryption/base", {
-        auth: {
-          username: resToken,
-          password: "x",
-        },
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8",
-          "Access-Control-Allow-Origin": "*",
-        },
-      })
+      .get(`${HOST_API}encryption/base`, axiosAuthConfig(resToken))
       .then((res) => {
         if (cookies.base === undefined || cookies.base !== res.data.base) {
           setCookie("base", res.data.base, { path: "/" });
@@ -79,32 +71,14 @@ function ChatWindow({ username }) {
       });
 
       axios.put(
-        `http://localhost:8081/api/encryption/update-public-key/${resId}`,
+        `${HOST_API}encryption/update-public-key/${resId}`,
         { publicKey: `0x${publicKey.toString(16)}` },
-        {
-          auth: {
-            username: resToken,
-            password: "x",
-          },
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8",
-            "Access-Control-Allow-Origin": "*",
-          },
-        }
+        axiosAuthConfig(resToken)
       );
     }
 
     await axios
-      .get("http://localhost:8081/api/friends/my", {
-        auth: {
-          username: resToken,
-          password: "x",
-        },
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8",
-          "Access-Control-Allow-Origin": "*",
-        },
-      })
+      .get(`${HOST_API}friends/my`, axiosAuthConfig(resToken))
       .then((res) => {
         res.data.friends.forEach((friend) => {
           const friendUsername = friend.username;
@@ -137,13 +111,6 @@ function ChatWindow({ username }) {
   }, []);
 
   useEffect(() => {
-    socket.on("room name response", (data) => {
-      setRoomsMap((roomsMap) => roomsMap.set(data.recipientId, data.roomName));
-    });
-    return () => socket.close();
-  }, []);
-
-  useEffect(() => {
     socket.on("room_response", (data) => {
       setResponses((responses) => [...responses, data]);
     });
@@ -158,6 +125,9 @@ function ChatWindow({ username }) {
       });
     });
 
+    socket.on("room name response", (data) => {
+      setRoomsMap((roomsMap) => roomsMap.set(data.recipientId, data.roomName));
+    });
     return () => socket.close();
   }, []);
 
@@ -200,8 +170,6 @@ function ChatWindow({ username }) {
       username: username,
       recipient: recipient,
     });
-
-    console.log(`left room with ${recipient}`);
   };
 
   const signOutHandler = () => {
@@ -211,48 +179,6 @@ function ChatWindow({ username }) {
     socket.disconnect();
     router.push("/");
     signOut();
-  };
-
-  const checkIfActive = (givenId) => {
-    if (givenId === currentRecipientId) {
-      return styles.activeDiv;
-    } else {
-      return styles.friendDiv;
-    }
-  };
-
-  const getMessages = async (userId, username) => {
-    await axios
-      .get(`http://localhost:8081/api/messages/with/${userId}/1`, {
-        auth: {
-          username: token,
-          password: "x",
-        },
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8",
-          "Access-Control-Allow-Origin": "*",
-        },
-      })
-      .then((res) => {
-        let msgs = [];
-        console.log("setting new messages with get");
-        console.log(cookies);
-        console.log(cookies["secretWith" + username]);
-        res.data.messages.datas.forEach((msg) => {
-          msgs.push({
-            contents: decryptString(
-              msg.contents,
-              cookies["secretWith" + username]
-            ),
-            receiverId: msg.receiverId,
-            senderId: msg.senderId,
-            timestamp: msg.timestamp,
-          });
-        });
-
-        setMessages(() => [...msgs]);
-      })
-      .catch((err) => console.log(err));
   };
 
   return (
@@ -271,23 +197,15 @@ function ChatWindow({ username }) {
             </div>
           </div>
           <div className={styles.friendsWindow}>
-            {friends.map((friend) => (
-              <div
-                className={checkIfActive(friend.id)}
-                id={friend.id}
-                name={friend.username}
-                key={friend.id}
-                onClick={() => {
-                  if (currentRecipientId !== friend.id) {
-                    getMessages(friend.id, friend.username);
-                  }
-                  setCurrentRecipient(() => friend.username);
-                  setCurrentRecipientId(() => friend.id);
-                }}
-              >
-                {friend.username}
-              </div>
-            ))}
+            <FriendsList
+              friends={friends}
+              currentRecipientId={currentRecipientId}
+              token={token}
+              cookies={cookies}
+              setCurrentRecipient={setCurrentRecipient}
+              setCurrentRecipientId={setCurrentRecipientId}
+              setMessages={setMessages}
+            />
           </div>
         </div>
         <div className={styles.chatArea}>
