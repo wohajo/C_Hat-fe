@@ -7,6 +7,8 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import { useCookies } from "react-cookie";
 import { decryptString, encryptString } from "./service/utlis";
+import MessageForm from "./MessageForm";
+import ChatArea from "./ChatArea";
 import { Toast, Form, Button, FormControl, InputGroup } from "react-bootstrap";
 
 function ChatWindow({ username }) {
@@ -16,7 +18,6 @@ function ChatWindow({ username }) {
   const [messages, setMessages] = useState([]);
   const [responses, setResponses] = useState([]);
   const [roomsMap, setRoomsMap] = useState(new Map());
-  const [messageValue, setMessageValue] = useState("");
   const [currentRecipient, setCurrentRecipient] = useState("");
   const [currentRecipientId, setCurrentRecipientId] = useState(-1);
   const [cookies, setCookie] = useCookies([]);
@@ -184,33 +185,6 @@ function ChatWindow({ username }) {
     }
   }, [responses]);
 
-  const sendMessage = () => {
-    if (messageValue.length < 1) {
-      return;
-    }
-
-    const receiver = friends.find(
-      (friend) => friend.username === currentRecipient
-    );
-    const receiverRoom = roomsMap.get(receiver.id);
-
-    const encryptedMessageString = encryptString(
-      messageValue,
-      cookies["secretWith" + currentRecipient]
-    );
-
-    socket.emit("room_message", {
-      roomName: receiverRoom,
-      sender: username,
-      senderId: userId,
-      receiver: currentRecipient,
-      receiverId: receiver.id,
-      contents: encryptedMessageString,
-      token: token,
-    });
-    setMessageValue(() => "");
-  };
-
   const joinRoom = (token, username, recipient, recipientId) => {
     socket.emit("join", {
       token: token,
@@ -228,14 +202,6 @@ function ChatWindow({ username }) {
     });
 
     console.log(`left room with ${recipient}`);
-  };
-
-  const checkUser = (userIdToCheck) => {
-    if (userIdToCheck === userId) {
-      return styles.chatFromUser;
-    } else {
-      return styles.chatToUser;
-    }
   };
 
   const signOutHandler = () => {
@@ -325,50 +291,24 @@ function ChatWindow({ username }) {
           </div>
         </div>
         <div className={styles.chatArea}>
-          {currentRecipient === undefined ? (
-            <div></div>
-          ) : (
-            messages.map((message) => {
-              return (
-                <p
-                  key={message.timestamp}
-                  className={checkUser(message.senderId)}
-                >
-                  {message.contents}
-                </p>
-              );
-            })
-          )}
+          <ChatArea
+            currentRecipient={currentRecipient}
+            messages={messages}
+            userId={userId}
+          />
         </div>
         <div className={styles.messageArea}>
-          <Form
-            onSubmit={(e) => {
-              e.preventDefault();
-              sendMessage();
-            }}
-            inline
-          >
-            <InputGroup className="mb-3">
-              <FormControl
-                disabled={currentRecipientId === -1 ? true : false}
-                placeholder="Message"
-                value={messageValue}
-                onChange={(e) => {
-                  setMessageValue(e.target.value);
-                }}
-              />
-              <InputGroup.Append>
-                <Button
-                  disabled={currentRecipientId === -1 ? true : false}
-                  variant="dark"
-                  id="send-button"
-                  type="submit"
-                >
-                  Send
-                </Button>
-              </InputGroup.Append>
-            </InputGroup>
-          </Form>
+          <MessageForm
+            cookies={cookies}
+            currentRecipient={currentRecipient}
+            currentRecipientId={currentRecipientId}
+            friends={friends}
+            roomsMap={roomsMap}
+            socket={socket}
+            username={username}
+            userId={userId}
+            token={token}
+          />
         </div>
       </div>
     </>
