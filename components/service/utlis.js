@@ -2,19 +2,17 @@ var CryptoJS = require("crypto-js");
 const iv = 0;
 
 export function encryptString(message, key) {
-  return CryptoJS.AES.encrypt(JSON.parse(JSON.stringify(message)), key, {
-    iv: iv,
-    padding: CryptoJS.pad.Pkcs7,
-    mode: CryptoJS.mode.CBC,
-  }).toString();
+  let encJson = CryptoJS.AES.encrypt(JSON.stringify(message), key).toString();
+  let encData = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(encJson));
+  return encData;
 }
 
 export function decryptString(message, key) {
-  const decrypted = CryptoJS.AES.decrypt(message, key, {
-    iv: iv,
-    padding: CryptoJS.pad.Pkcs7,
-    mode: CryptoJS.mode.CBC,
-  }).toString(CryptoJS.enc.Utf8);
-  if (decrypted === "") return "🔒";
-  return decrypted;
+  let decData = CryptoJS.enc.Base64.parse(message).toString(CryptoJS.enc.Utf8);
+  try {
+    let bytes = CryptoJS.AES.decrypt(decData, key).toString(CryptoJS.enc.Utf8);
+    return JSON.parse(bytes);
+  } catch (error) {
+    return "🔒";
+  }
 }

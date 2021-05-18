@@ -105,28 +105,28 @@ function ChatWindow({ username }) {
         res.data.friends.forEach((friend) => {
           const friendUsername = friend.username;
 
-          if (
-            friend.publicKey !== "" ||
-            friend.publicKey !== null ||
-            friend.publicKey !== undefined
-          ) {
-            console.log(`setting cookie for ${friendUsername}`);
-            console.log(`friends public key: ${friend.publicKey}`);
+          console.log(`setting cookie for ${friendUsername}`);
+          console.log(`friends public key: ${friend.publicKey}`);
 
-            const friendPublicKey = BigInt(friend.publicKey, 16);
-            const myPrivateKey = BigInt(privateKey, 16);
-            const sharedSecret = friendPublicKey * myPrivateKey;
+          const friendPublicKey = BigInt(friend.publicKey, 16);
+          const myPrivateKey = BigInt(privateKey, 16);
+          const sharedSecret = friendPublicKey * myPrivateKey;
 
-            console.log(`sharedSecret with ${friendUsername}: ${sharedSecret}`);
+          console.log(`sharedSecret with ${friendUsername}: ${sharedSecret}`);
 
-            setCookie(friendUsername, `0x${sharedSecret.toString(16)}`, {
+          setCookie(friendUsername, friend.publicKey, {
+            path: "/",
+          });
+          setCookie(
+            "secretWith" + friendUsername,
+            `0x${sharedSecret.toString(16)}`,
+            {
               path: "/",
-            });
+            }
+          );
+          joinRoom(resToken, resUsername, friend.username, friend.id);
 
-            joinRoom(resToken, resUsername, friend.username, friend.id);
-
-            setFriends((friends) => [...friends, friend]);
-          }
+          setFriends((friends) => [...friends, friend]);
         });
       })
       .catch((err) => console.log(err));
@@ -163,10 +163,14 @@ function ChatWindow({ username }) {
     const message = responses[responses.length - 1];
 
     if (message.roomName === roomsMap.get(currentRecipientId)) {
+      console.log("setting messages from socket");
       setMessages(() => [
         ...messages,
         {
-          contents: decryptString(message.contents, cookies[currentRecipient]),
+          contents: decryptString(
+            message.contents,
+            cookies["secretWith" + currentRecipient]
+          ),
           receiverId: message.receiverId,
           senderId: message.senderId,
           timestamp: message.timestamp,
@@ -190,7 +194,7 @@ function ChatWindow({ username }) {
 
     const encryptedMessageString = encryptString(
       messageValue,
-      cookies[currentRecipient]
+      cookies["secretWith" + currentRecipient]
     );
 
     socket.emit("room_message", {
@@ -263,9 +267,15 @@ function ChatWindow({ username }) {
       })
       .then((res) => {
         let msgs = [];
+        console.log("setting new messages with get");
+        console.log(cookies);
+        console.log(cookies["secretWith" + username]);
         res.data.messages.datas.forEach((msg) => {
           msgs.push({
-            contents: decryptString(msg.contents, cookies[username]),
+            contents: decryptString(
+              msg.contents,
+              cookies["secretWith" + username]
+            ),
             receiverId: msg.receiverId,
             senderId: msg.senderId,
             timestamp: msg.timestamp,
