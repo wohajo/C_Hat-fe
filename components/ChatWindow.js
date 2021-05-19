@@ -1,4 +1,3 @@
-import React from "react";
 import axios from "axios";
 import ChatArea from "./ChatArea";
 import MessageForm from "./MessageForm";
@@ -6,10 +5,12 @@ import FriendsList from "./FriendsList";
 import { useRouter } from "next/router";
 import { useCookies } from "react-cookie";
 import { socket } from "./service/socket";
+import { React, useCallback } from "react";
 import { useState, useEffect } from "react";
-import { axiosAuthConfig, decryptString } from "./service/utlis";
+import { axiosAuthConfig, decryptString, truncate } from "./service/utlis";
 import styles from "../styles/Chat.module.scss";
 import { getSession, signOut } from "next-auth/client";
+import { Toast } from "react-bootstrap";
 
 function ChatWindow({ username }) {
   const [token, setToken] = useState("");
@@ -22,6 +23,8 @@ function ChatWindow({ username }) {
   const [currentRecipientId, setCurrentRecipientId] = useState(-1);
   const [cookies, setCookie] = useCookies([]);
   const [showToast, setShowToast] = useState(false);
+  const [toastMessasge, setToastMessasge] = useState("");
+  const [toastUsername, setToastUsername] = useState("");
   const HOST_API = "http://localhost:8081/api/";
 
   const random = require("random-bigint");
@@ -29,12 +32,12 @@ function ChatWindow({ username }) {
   const router = useRouter();
 
   useEffect(async () => {
-    var resToken = "";
-    var resId = "";
-    var resUsername = "";
-    var resBase = cookies.base;
-    var privateKey = cookies.privateKey;
-    var publicKey = cookies.publicKey;
+    let resToken = "";
+    let resId = "";
+    let resUsername = "";
+    let resBase = cookies.base;
+    let privateKey = cookies.privateKey;
+    let publicKey = cookies.publicKey;
 
     await getSession().then(async (sessionRes) => {
       if (sessionRes !== null) {
@@ -151,6 +154,12 @@ function ChatWindow({ username }) {
         },
       ]);
     } else {
+      let friend = friends.find((f) => f.id === message.senderId);
+      console.log(friend);
+      setToastUsername(friend.username);
+      setToastMessasge(
+        decryptString(message.contents, cookies["secretWith" + friend.username])
+      );
       setShowToast(() => true);
     }
   }, [responses]);
@@ -229,6 +238,22 @@ function ChatWindow({ username }) {
           />
         </div>
       </div>
+      <Toast
+        style={{
+          position: "absolute",
+          top: 4,
+        }}
+        show={showToast}
+        delay={3000}
+        autohide
+        onClose={() => setShowToast(false)}
+      >
+        <Toast.Header closeButton={false}>
+          <strong className="mr-auto">{toastUsername}</strong>
+          <small style={{ marginLeft: "5px" }}>send You a message</small>
+        </Toast.Header>
+        <Toast.Body>{truncate(toastMessasge, 80)}</Toast.Body>
+      </Toast>
     </>
   );
 }

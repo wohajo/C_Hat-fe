@@ -5,7 +5,7 @@ import axios from "axios";
 
 export default function Register() {
   const handleRegister = async (event) => {
-    var postData = JSON.stringify({
+    let postData = JSON.stringify({
       firstName: event.target.firstName.value,
       lastName: event.target.lastName.value,
       username: event.target.username.value,
