@@ -7,7 +7,7 @@
   gap: 0px 0px;
   grid-template-areas:
     "sidePanel chatArea chatArea chatArea"
-    "sidePanel messageArea messageArea messageArea";
+    "messageArea messageArea messageArea messageArea";
 }
 
 @media only screen and (max-width: 600px) {
@@ -28,6 +28,8 @@
 
 .sidePanel {
   grid-area: sidePanel;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .friendDiv,
