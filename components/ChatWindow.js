@@ -12,8 +12,9 @@ import styles from "../styles/Chat.module.scss";
 import { getSession, signOut } from "next-auth/client";
 import { Toast } from "react-bootstrap";
 
-function ChatWindow({ username }) {
+function ChatWindow() {
   const [token, setToken] = useState("");
+  const [username, setUsername] = useState("");
   const [userId, setUserId] = useState(0);
   const [friends, setFriends] = useState([]);
   const [messages, setMessages] = useState([]);
@@ -46,6 +47,7 @@ function ChatWindow({ username }) {
         resUsername = sessionRes.user.name;
         setToken(() => sessionRes.accessToken);
         setUserId(() => sessionRes.id);
+        setUsername(() => sessionRes.user.name);
       } else {
         router.push("/");
       }
