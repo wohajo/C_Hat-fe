@@ -3,11 +3,17 @@ import ChatArea from "./ChatArea";
 import MessageForm from "./MessageForm";
 import FriendsList from "./FriendsList";
 import { useRouter } from "next/router";
-import { useCookies } from "react-cookie";
 import { socket } from "./service/socket";
 import { React, useCallback } from "react";
 import { useState, useEffect } from "react";
-import { axiosAuthConfig, decryptString, truncate } from "./service/utlis";
+import {
+  axiosAuthConfig,
+  decryptString,
+  getFromLocalStorage,
+  isInLocalStorage,
+  setInLocalStorage,
+  truncate,
+} from "./service/utlis";
 import styles from "../styles/Chat.module.scss";
 import { getSession, signOut } from "next-auth/client";
 import { Toast } from "react-bootstrap";
@@ -22,7 +28,6 @@ function ChatWindow() {
   const [roomsMap, setRoomsMap] = useState(new Map());
   const [currentRecipient, setCurrentRecipient] = useState("");
   const [currentRecipientId, setCurrentRecipientId] = useState(-1);
-  const [cookies, setCookie] = useCookies([]);
   const [showToast, setShowToast] = useState(false);
   const [toastMessasge, setToastMessasge] = useState("");
   const [toastUsername, setToastUsername] = useState("");
@@ -36,9 +41,7 @@ function ChatWindow() {
     let resToken = "";
     let resId = "";
     let resUsername = "";
-    let resBase = cookies.base;
-    let privateKey = cookies.privateKey;
-    let publicKey = cookies.publicKey;
+    let resBase = getFromLocalStorage("base");
 
     await getSession().then(async (sessionRes) => {
       if (sessionRes !== null) {
@@ -53,34 +56,40 @@ function ChatWindow() {
       }
     });
 
+    let privateKey = getFromLocalStorage(`${resUsername}privateKey`);
+    let publicKey = getFromLocalStorage(`${resUsername}publicKey`);
+
     await axios
       .get(`${HOST_API}encryption/base`, axiosAuthConfig(resToken))
       .then((res) => {
-        if (cookies.base === undefined || cookies.base !== res.data.base) {
-          setCookie("base", res.data.base, { path: "/" });
+        if (
+          !isInLocalStorage("base") ||
+          getFromLocalStorage("base") !== res.data.base
+        ) {
+          setInLocalStorage("base", res.data.base);
           resBase = res.data.base;
+
+          const base = BigInt(resBase, 16);
+          privateKey = random(resBase.toString(2).length);
+          publicKey = privateKey * base;
+
+          setInLocalStorage(
+            `${resUsername}privateKey`,
+            `0x${privateKey.toString(16)}`
+          );
+          setInLocalStorage(
+            `${resUsername}publicKey`,
+            `0x${publicKey.toString(16)}`
+          );
+
+          axios.put(
+            `${HOST_API}encryption/update-public-key/${resId}`,
+            { publicKey: `0x${publicKey.toString(16)}` },
+            axiosAuthConfig(resToken)
+          );
         }
       })
       .catch((err) => console.log(err));
-
-    if (cookies.base !== resBase) {
-      const base = BigInt(resBase, 16);
-      privateKey = random(resBase.toString(2).length);
-      publicKey = privateKey * base;
-
-      setCookie("privateKey", `0x${privateKey.toString(16)}`, {
-        path: "/",
-      });
-      setCookie("publicKey", `0x${publicKey.toString(16)}`, {
-        path: "/",
-      });
-
-      axios.put(
-        `${HOST_API}encryption/update-public-key/${resId}`,
-        { publicKey: `0x${publicKey.toString(16)}` },
-        axiosAuthConfig(resToken)
-      );
-    }
 
     await axios
       .get(`${HOST_API}friends/my`, axiosAuthConfig(resToken))
@@ -97,15 +106,10 @@ function ChatWindow() {
 
           console.log(`sharedSecret with ${friendUsername}: ${sharedSecret}`);
 
-          setCookie(friendUsername, friend.publicKey, {
-            path: "/",
-          });
-          setCookie(
-            "secretWith" + friendUsername,
-            `0x${sharedSecret.toString(16)}`,
-            {
-              path: "/",
-            }
+          setInLocalStorage(`${friendUsername}`, friend.publicKey);
+          setInLocalStorage(
+            `${resUsername}secretWith${friendUsername}`,
+            `0x${sharedSecret.toString(16)}`
           );
           joinRoom(resToken, resUsername, friend.username, friend.id);
 
@@ -148,7 +152,7 @@ function ChatWindow() {
         {
           contents: decryptString(
             message.contents,
-            cookies["secretWith" + currentRecipient]
+            getFromLocalStorage(`${username}secretWith${currentRecipient}`)
           ),
           receiverId: message.receiverId,
           senderId: message.senderId,
@@ -160,11 +164,14 @@ function ChatWindow() {
       console.log(friend);
       setToastUsername(friend.username);
       setToastMessasge(
-        decryptString(message.contents, cookies["secretWith" + friend.username])
+        decryptString(
+          message.contents,
+          getFromLocalStorage(`${username}secretWith${friend.username}`)
+        )
       );
       setShowToast(() => true);
     }
-  }, [responses]);
+  }, [responses, username]);
 
   const joinRoom = (token, username, recipient, recipientId) => {
     socket.emit("join", {
@@ -212,10 +219,10 @@ function ChatWindow() {
               friends={friends}
               currentRecipientId={currentRecipientId}
               token={token}
-              cookies={cookies}
               setCurrentRecipient={setCurrentRecipient}
               setCurrentRecipientId={setCurrentRecipientId}
               setMessages={setMessages}
+              username={username}
             />
           </div>
         </div>
@@ -228,7 +235,6 @@ function ChatWindow() {
         </div>
         <div className={styles.messageArea}>
           <MessageForm
-            cookies={cookies}
             currentRecipient={currentRecipient}
             currentRecipientId={currentRecipientId}
             friends={friends}

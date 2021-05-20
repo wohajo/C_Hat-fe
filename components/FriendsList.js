@@ -1,13 +1,13 @@
 import React from "react";
 import axios from "axios";
-import { decryptString } from "./service/utlis";
+import { decryptString, getFromLocalStorage } from "./service/utlis";
 import styles from "../styles/Chat.module.scss";
 
 export default function FriendsList({
   friends,
   currentRecipientId,
   token,
-  cookies,
+  username,
   setCurrentRecipient,
   setCurrentRecipientId,
   setMessages,
@@ -22,7 +22,7 @@ export default function FriendsList({
     }
   };
 
-  const getMessages = async (userId, username, token) => {
+  const getMessages = async (userId, friendUsername, token) => {
     await axios
       .get(`${HOST_API}messages/with/${userId}/1`, {
         auth: {
@@ -37,13 +37,11 @@ export default function FriendsList({
       .then((res) => {
         let msgs = [];
         console.log("setting new messages with get");
-        console.log(cookies);
-        console.log(cookies["secretWith" + username]);
         res.data.messages.datas.forEach((msg) => {
           msgs.push({
             contents: decryptString(
               msg.contents,
-              cookies["secretWith" + username]
+              getFromLocalStorage(`${username}secretWith${friendUsername}`)
             ),
             receiverId: msg.receiverId,
             senderId: msg.senderId,

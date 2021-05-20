@@ -34,4 +34,20 @@ export function axiosAuthConfig(token) {
   };
 }
 
+export function setInLocalStorage(name, value) {
+  return localStorage.setItem(name, value);
+}
+
+export function removeFromLocalStorage(name, value) {
+  return localStorage.removeItem(name, value);
+}
+
+export function isInLocalStorage(name) {
+  return localStorage.getItem(name) === null ? false : true;
+}
+
+export function getFromLocalStorage(name) {
+  return isInLocalStorage(name) ? localStorage.getItem(name) : undefined;
+}
+
 export const HOST_API = process.env.HOST_API;

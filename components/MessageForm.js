@@ -1,11 +1,14 @@
 import { React, useState, useEffect } from "react";
-import { decryptString, encryptString } from "./service/utlis";
+import {
+  decryptString,
+  encryptString,
+  getFromLocalStorage,
+} from "./service/utlis";
 import { Toast, Form, Button, FormControl, InputGroup } from "react-bootstrap";
 
 export default function name({
   currentRecipientId,
   currentRecipient,
-  cookies,
   friends,
   roomsMap,
   socket,
@@ -19,10 +22,6 @@ export default function name({
     if (messageValue.length < 1) {
       return;
     }
-    if (cookies["secretWith" + currentRecipient] === undefined) {
-      alert("Refresh to get a key");
-      return;
-    }
 
     const receiver = friends.find(
       (friend) => friend.username === currentRecipient
@@ -31,7 +30,7 @@ export default function name({
 
     const encryptedMessageString = encryptString(
       messageValue,
-      cookies["secretWith" + currentRecipient]
+      getFromLocalStorage(`${username}secretWith${currentRecipient}`)
     );
 
     socket.emit("room_message", {
