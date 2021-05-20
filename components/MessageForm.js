@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import { decryptString, encryptString } from "./service/utlis";
 import { Toast, Form, Button, FormControl, InputGroup } from "react-bootstrap";
 
@@ -17,6 +17,10 @@ export default function name({
 
   const sendMessage = () => {
     if (messageValue.length < 1) {
+      return;
+    }
+    if (cookies["secretWith" + currentRecipient] === undefined) {
+      alert("Refresh to get a key");
       return;
     }
 

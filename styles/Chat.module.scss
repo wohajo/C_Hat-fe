@@ -69,33 +69,6 @@
   height: 100%;
 }
 
-.buttonsArea {
-  grid-area: buttonsArea;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.sendButton {
-  width: 80%;
-  height: 30%;
-  font-size: large;
-  background-color: darkviolet;
-  border: none;
-  padding: 5px;
-  color: white;
-  margin-bottom: 5px;
-}
-
-.sendButton:hover {
-  background-color: rgb(157, 0, 224);
-  cursor: pointer;
-}
-
-.sendButton:disabled {
-  background-color: rgb(146, 143, 148);
-}
-
 .chatFromUser,
 .chatToUser {
   padding: 10px;
