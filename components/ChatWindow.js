@@ -64,7 +64,8 @@ function ChatWindow() {
       .then((res) => {
         if (
           !isInLocalStorage("base") ||
-          getFromLocalStorage("base") !== res.data.base
+          getFromLocalStorage("base") !== res.data.base ||
+          !isInLocalStorage(`${resUsername}privateKey`)
         ) {
           setInLocalStorage("base", res.data.base);
           resBase = res.data.base;

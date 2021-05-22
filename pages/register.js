@@ -35,7 +35,6 @@ export default function Register() {
     <div className={allStyles.container}>
       <Head>
         <title>C_Hat - Register</title>
-        <link rel="icon" href="/favicon.ico" />
       </Head>
       <h1>Register to C_Hat</h1>
       <form onSubmit={handleRegister} className={styles.credentialsBox}>

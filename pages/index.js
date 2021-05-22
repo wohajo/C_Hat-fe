@@ -33,7 +33,6 @@ export default function Home() {
     <div className={allStyles.container}>
       <Head>
         <title>C_Hat</title>
-        <link rel="icon" href="/favicon.ico" />
       </Head>
       <h1>Welcome to C_Hat</h1>{" "}
       <span className={styles.error}>{loginError}</span>
