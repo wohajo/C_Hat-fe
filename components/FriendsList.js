@@ -68,7 +68,8 @@ export default function FriendsList({
         setCurrentRecipientId(() => friend.id);
       }}
     >
-      {friend.username}
+      <b>{friend.username}</b>
+      <p>{`${friend.firstName} ${friend.lastName}`}</p>
     </div>
   ));
 }

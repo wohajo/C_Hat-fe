@@ -2,12 +2,12 @@
   height: 70vh;
   width: 80%;
   display: grid;
-  grid-template-columns: 0.6fr 0.6fr 1.2fr 0.6fr;
+  grid-template-columns: 0.5fr 1.5fr;
   grid-template-rows: 1.9fr 0.1fr;
   gap: 0px 0px;
   grid-template-areas:
-    "sidePanel chatArea chatArea chatArea"
-    "messageArea messageArea messageArea messageArea";
+    "sidePanel chatArea"
+    "messageArea messageArea";
 }
 
 @media only screen and (max-width: 600px) {
@@ -35,13 +35,18 @@
 .friendDiv,
 .utilityDiv,
 .activeDiv {
-  padding: 10%;
+  padding: 10px;
   width: 100%;
   height: 10vh;
   border-bottom: 1px solid rgb(209, 209, 209);
-  text-align: center;
-  overflow-y: auto;
+  overflow-y: hidden;
   overflow-x: hidden;
+}
+
+.utilityDiv {
+  text-align: center;
+  font-size: larger;
+  font-weight: bold;
 }
 
 .activeDiv {
