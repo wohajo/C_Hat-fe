@@ -54,7 +54,7 @@ export default function Home() {
             required
           />
         </Form.Group>
-        <Button variant="dark" type="submit">
+        <Button variant="dark" type="submit" disabled={hasLoginStarted}>
           Submit
         </Button>
       </Form>

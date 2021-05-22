@@ -23,8 +23,8 @@ const providers = [
           return { status: "success", data: user.data };
         }
       } catch (error) {
-        console.log(error);
-        throw new Error(error.response.data);
+        if (error.response.status === 401) throw new Error("Unauthorized user");
+        else throw new Error(error.response.data);
       }
     },
   }),
