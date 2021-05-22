@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import FriendRequest from "../components/FriendRequest";
 import Friend from "../components/Friend";
 import axios from "axios";
+import { InputGroup, Button, FormControl, Form } from "react-bootstrap";
+import { axiosAuthConfig } from "../components/service/utlis";
 
 export default function Friends() {
   const [session, loading] = useSession();
@@ -16,7 +18,10 @@ export default function Friends() {
   const [currentTab, setCurrentTab] = useState("find");
   const [friendsRequests, setFriendsRequests] = useState([]);
   const [friends, setFriends] = useState([]);
-  const [searchString, setSearchString] = useState("");
+
+  const [searchUsernameString, setSearchUsernameString] = useState("");
+  const [searchNameString, setSearchNameString] = useState("");
+
   const router = useRouter();
   const HOST_API = "http://localhost:8081/api/";
 
@@ -54,55 +59,36 @@ export default function Friends() {
     setFriendsRequests(() => []);
     setCurrentTab(() => option);
     axios
-      .get(`${HOST_API}invites/my/${option}`, {
-        auth: {
-          username: token,
-          password: "x",
-        },
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8",
-          "Access-Control-Allow-Origin": "*",
-        },
-      })
-      .then((res) => setFriendsRequests(() => [...res.data.invites]));
+      .get(`${HOST_API}invites/my/${option}`, axiosAuthConfig(token))
+      .then((res) => setFriendsRequests(() => [...res.data.invites]))
+      .catch((err) => console.log(err));
   };
 
   const handleMyFriends = () => {
     setFriends(() => []);
     setCurrentTab(() => "your");
     axios
-      .get(`${HOST_API}friends/my`, {
-        auth: {
-          username: token,
-          password: "x",
-        },
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8",
-          "Access-Control-Allow-Origin": "*",
-        },
-      })
-      .then((res) => setFriends(() => [...res.data.friends]));
+      .get(`${HOST_API}friends/my`, axiosAuthConfig(token))
+      .then((res) => setFriends(() => [...res.data.friends]))
+      .catch((err) => console.log(err));
   };
 
-  const SearchFriends = () => {
+  const SearchFriends = (searchOption, searchString) => {
+    if (searchString.length === 0) return;
     axios
-      .get(`${HOST_API}users/find/${searchString}`, {
-        auth: {
-          username: token,
-          password: "x",
-        },
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8",
-          "Access-Control-Allow-Origin": "*",
-        },
-      })
-      .then((res) => setFriends(() => [...res.data.users]));
+      .get(
+        `${HOST_API}users/find/${searchOption}/${searchString}`,
+        axiosAuthConfig(token)
+      )
+      .then((res) => setFriends(() => [...res.data.users]))
+      .catch((err) => console.log(err));
   };
 
   const handleFind = () => {
     setCurrentTab(() => "find");
     setFriends(() => []);
-    setSearchString(() => "");
+    setSearchNameString(() => "");
+    setSearchUsernameString(() => "");
   };
 
   return (
@@ -135,13 +121,49 @@ export default function Friends() {
         </div>
         <div className={styles.tabs}>
           <div className={checkIfActive("find", "TAB")} id={"find"}>
-            <input
-              type="text"
-              value={searchString}
-              placeholder="Find by username"
-              onChange={(e) => setSearchString(() => e.target.value)}
-            />
-            <button onClick={SearchFriends}>Search</button>
+            <Form
+              onSubmit={(e) => {
+                e.preventDefault();
+                SearchFriends("name", searchNameString);
+              }}
+              inline
+            >
+              <InputGroup className="mb-3">
+                <FormControl
+                  placeholder="Find by name"
+                  value={searchNameString}
+                  onChange={(e) => setSearchNameString(() => e.target.value)}
+                />
+                <InputGroup.Append>
+                  <Button variant="dark" id="send-button" type="submit">
+                    Search
+                  </Button>
+                </InputGroup.Append>
+              </InputGroup>
+            </Form>
+            <p>or</p>
+            <Form
+              onSubmit={(e) => {
+                e.preventDefault();
+                SearchFriends("name", searchUsernameString);
+              }}
+              inline
+            >
+              <InputGroup className="mb-3">
+                <FormControl
+                  placeholder="Find by username"
+                  value={searchUsernameString}
+                  onChange={(e) =>
+                    setSearchUsernameString(() => e.target.value)
+                  }
+                />
+                <InputGroup.Append>
+                  <Button variant="dark" id="send-button" type="submit">
+                    Search
+                  </Button>
+                </InputGroup.Append>
+              </InputGroup>
+            </Form>
             {friends.map((fr) => {
               return (
                 <Friend

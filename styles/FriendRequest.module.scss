@@ -1,18 +1,7 @@
 .friendRequest {
-  margin: 5px;
-  padding: 5px;
-  border: 1px solid darkviolet;
   width: 50%;
-  display: grid;
-  grid-template-columns: 1.6fr 0.3fr 1fr;
-  grid-template-rows: 1.4fr 1.4fr 0.2fr;
-  gap: 0px 0px;
-  grid-template-areas:
-    "requestUsername . ."
-    "requestName . requestButtons"
-    ". . .";
   min-height: 10vh;
-  max-height: 10vh;
+  margin-bottom: 10px;
 }
 .requestButtons {
   grid-area: requestButtons;

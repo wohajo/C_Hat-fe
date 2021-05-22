@@ -1,10 +1,6 @@
-import { React, useState, useEffect } from "react";
-import {
-  decryptString,
-  encryptString,
-  getFromLocalStorage,
-} from "./service/utlis";
-import { Toast, Form, Button, FormControl, InputGroup } from "react-bootstrap";
+import { React, useState } from "react";
+import { encryptString, getFromLocalStorage } from "./service/utlis";
+import { Form, Button, FormControl, InputGroup } from "react-bootstrap";
 
 export default function name({
   currentRecipientId,
