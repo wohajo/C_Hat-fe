@@ -95,8 +95,8 @@ export default function Friends() {
 
   return (
     <div className={allStyles.container}>
-      <Button variant="link" onClick={() => router.push("/dashboard")}>
-        go back
+      <Button variant="outline-dark" onClick={() => router.push("/dashboard")}>
+        Go back
       </Button>{" "}
       <h1>Manage friends</h1>
       <div className={styles.tabContainer}>

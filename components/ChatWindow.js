@@ -68,7 +68,6 @@ function ChatWindow() {
       .get(`${HOST_API}encryption/base`, axiosAuthConfig(resToken))
       .then((res) => {
         if (
-          !isInLocalStorage("base") ||
           getFromLocalStorage("base") !== res.data.base ||
           !isInLocalStorage(`${resUsername}privateKey`)
         ) {
@@ -238,7 +237,8 @@ function ChatWindow() {
   return (
     <>
       <Button
-        variant="dark"
+        variant="outline-dark"
+        size="sm"
         disabled={olderMsgsButton}
         onClick={() => handleOlderMessages()}
       >

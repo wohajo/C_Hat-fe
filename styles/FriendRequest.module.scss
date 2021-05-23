@@ -1,5 +1,5 @@
 .friendRequest {
-  width: 50%;
+  width: 100%;
   margin-bottom: 10px;
 }
 .requestButtons {
@@ -14,12 +14,4 @@
 .requestName {
   grid-area: requestName;
   text-align: left;
-}
-
-@media only screen and (max-width: 400px) {
-  .friendRequest {
-    width: 80%;
-    min-height: 15vh;
-    max-height: 15vh;
-  }
 }
