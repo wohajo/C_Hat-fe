@@ -296,7 +296,7 @@ function ChatWindow() {
           top: 4,
         }}
         show={showToast}
-        delay={15000}
+        delay={3000}
         autohide
         onClose={() => setShowToast(false)}
       >
