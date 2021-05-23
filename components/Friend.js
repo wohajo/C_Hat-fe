@@ -15,7 +15,7 @@ function Friend({ id, firstName, lastName, username, isFound, userId, token }) {
 
   const handleInvite = () => {
     axios
-      .post(`${HOST_API}/invites/invite/${id}`, {}, axiosAuthConfig(token))
+      .post(`${HOST_API}invites/invite/${id}`, {}, axiosAuthConfig(token))
       .then((res) => console.log(res));
   };
 

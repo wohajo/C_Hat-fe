@@ -25,6 +25,8 @@ export default function Friends() {
   const router = useRouter();
   const HOST_API = "http://localhost:8081/api/";
 
+  // TODO toast error/ok handling
+
   useEffect(async () => {
     if (!loading && !session?.accessToken) {
       router.push("/");
@@ -93,7 +95,9 @@ export default function Friends() {
 
   return (
     <div className={allStyles.container}>
-      <span onClick={() => router.push("/dashboard")}>go back</span>{" "}
+      <Button variant="link" onClick={() => router.push("/dashboard")}>
+        go back
+      </Button>{" "}
       <h1>Manage friends</h1>
       <div className={styles.tabContainer}>
         <div className={styles.tabButtons}>
@@ -145,7 +149,7 @@ export default function Friends() {
             <Form
               onSubmit={(e) => {
                 e.preventDefault();
-                SearchFriends("name", searchUsernameString);
+                SearchFriends("username", searchUsernameString);
               }}
               inline
             >
@@ -194,6 +198,8 @@ export default function Friends() {
               return (
                 <FriendRequest
                   isPending={true}
+                  setFriendsRequests={setFriendsRequests}
+                  friendsRequests={friendsRequests}
                   key={fr.id}
                   {...fr}
                   token={token}
@@ -206,6 +212,8 @@ export default function Friends() {
               return (
                 <FriendRequest
                   isPending={false}
+                  setFriendsRequests={setFriendsRequests}
+                  friendsRequests={friendsRequests}
                   key={fr.id}
                   {...fr}
                   token={token}

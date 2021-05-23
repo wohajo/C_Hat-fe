@@ -2,6 +2,8 @@ import React from "react";
 import styles from "../styles/FriendRequest.module.scss";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { axiosAuthConfig } from "./service/utlis";
+import { Button, Card } from "react-bootstrap";
 
 function FriendRequest({
   id,
@@ -11,6 +13,8 @@ function FriendRequest({
   receiver,
   isPending,
   token,
+  setFriendsRequests,
+  friendRequests,
 }) {
   const [username, setUsername] = useState("");
   const [name, setName] = useState("");
@@ -30,29 +34,26 @@ function FriendRequest({
 
   const handleAction = (action) => {
     axios
-      .put(
-        `${HOST_API}invites/${action}/${id}`,
-        {},
-        {
-          auth: {
-            username: token,
-            password: "x",
-          },
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8",
-            "Access-Control-Allow-Origin": "*",
-          },
-        }
-      )
-      .then((res) => console.log(res));
+      .put(`${HOST_API}invites/${action}/${id}`, {}, axiosAuthConfig(token))
+      .then((res) => {
+        console.log(res);
+        setFriendsRequests((friendRequests) =>
+          friendRequests.slice(0, friendRequests.length - 1)
+        );
+      })
+      .catch((err) => console.log(err));
   };
 
   const checkIfPending = () => {
     if (isPending) {
       return (
         <div>
-          <button onClick={() => handleAction(ACCEPT)}>A</button>
-          <button onClick={() => handleAction(REJECT)}>R</button>
+          <Button variant="dark" onClick={() => handleAction(ACCEPT)}>
+            Accept
+          </Button>
+          <Button variant="danger" onClick={() => handleAction(REJECT)}>
+            Reject
+          </Button>
         </div>
       );
     } else {
@@ -65,11 +66,13 @@ function FriendRequest({
   };
 
   return (
-    <div className={styles.friendRequest}>
-      <div className={styles.requestUsername}>{username}</div>
-      <div className={styles.requestName}>{name}</div>
-      <div className={styles.requestButtons}>{checkIfPending()}</div>
-    </div>
+    <Card className={styles.friendRequest}>
+      <Card.Header>{username}</Card.Header>
+      <Card.Body>
+        <Card.Title>{`${name}`}</Card.Title>
+        {checkIfPending()}
+      </Card.Body>
+    </Card>
   );
 }
 
