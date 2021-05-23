@@ -1,7 +1,4 @@
-import React from "react";
 import styles from "../styles/Chat.module.scss";
-
-// TODO load previous messsages button (pages)
 
 export default function ChatArea({ currentRecipient, messages, userId }) {
   const checkUser = (userIdToCheck) => {
@@ -17,7 +14,7 @@ export default function ChatArea({ currentRecipient, messages, userId }) {
   } else {
     return messages.map((message) => {
       return (
-        <p key={message.timestamp} className={checkUser(message.senderId)}>
+        <p key={message.id} className={checkUser(message.senderId)}>
           {message.contents}
         </p>
       );

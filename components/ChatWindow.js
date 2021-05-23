@@ -17,6 +17,7 @@ import styles from "../styles/Chat.module.scss";
 import { getSession, signOut } from "next-auth/client";
 import { Toast } from "react-bootstrap";
 import { SocketContext } from "./service/socket";
+import { Button } from "react-bootstrap";
 
 function ChatWindow() {
   const socket = useContext(SocketContext);
@@ -32,6 +33,9 @@ function ChatWindow() {
   const [showToast, setShowToast] = useState(false);
   const [toastMessasge, setToastMessasge] = useState("");
   const [toastUsername, setToastUsername] = useState("");
+  const [messagePagination, setMessagePagination] = useState(2);
+  const [olderMsgsButton, setOlderMsgsButton] = useState(false);
+
   const HOST_API = "http://localhost:8081/api/";
 
   const random = require("random-bigint");
@@ -152,6 +156,7 @@ function ChatWindow() {
       setMessages(() => [
         ...messages,
         {
+          id: message.id,
           contents: decryptString(
             message.contents,
             getFromLocalStorage(`${username}secretWith${currentRecipient}`)
@@ -201,8 +206,40 @@ function ChatWindow() {
     signOut();
   };
 
+  const handleOlderMessages = async () => {
+    await axios
+      .get(
+        `${HOST_API}messages/with/${currentRecipientId}/${messagePagination}`,
+        axiosAuthConfig(token)
+      )
+      .then((res) => {
+        let msgs = [];
+        console.log("loading older messages");
+        res.data.messages.datas.forEach((msg) => {
+          msgs.push({
+            id: msg.id,
+            contents: decryptString(
+              msg.contents,
+              getFromLocalStorage(`${username}secretWith${currentRecipient}`)
+            ),
+            receiverId: msg.receiverId,
+            senderId: msg.senderId,
+            timestamp: msg.timestamp,
+          });
+        });
+
+        setMessages((messages) => [...msgs, ...messages]);
+        setMessagePagination((messagePagination) => messagePagination + 1);
+        if (msgs.length === 0) setOlderMsgsButton(() => true);
+      })
+      .catch((err) => console.log(err));
+  };
+
   return (
     <>
+      <Button disabled={olderMsgsButton} onClick={() => handleOlderMessages()}>
+        Load previous messages
+      </Button>
       <div className={styles.chatContainer}>
         <div className={styles.sidePanel}>
           <div className={styles.utilityWindow}>
@@ -221,6 +258,7 @@ function ChatWindow() {
               friends={friends}
               currentRecipientId={currentRecipientId}
               token={token}
+              setMessagePagination={setMessagePagination}
               setCurrentRecipient={setCurrentRecipient}
               setCurrentRecipientId={setCurrentRecipientId}
               setMessages={setMessages}

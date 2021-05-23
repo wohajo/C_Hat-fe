@@ -5,7 +5,17 @@ import axios from "axios";
 import { Card, Button } from "react-bootstrap";
 import { axiosAuthConfig } from "./service/utlis";
 
-function Friend({ id, firstName, lastName, username, isFound, userId, token }) {
+function Friend({
+  id,
+  firstName,
+  lastName,
+  username,
+  isFound,
+  userId,
+  token,
+  friends,
+  setFriends,
+}) {
   const [name, setName] = useState("");
   const HOST_API = "http://localhost:8081/api/";
 
@@ -22,7 +32,9 @@ function Friend({ id, firstName, lastName, username, isFound, userId, token }) {
   const handleDelete = () => {
     axios
       .delete(`${HOST_API}friends/remove/${id}`, axiosAuthConfig(token))
-      .then((res) => console.log(res));
+      .then((res) => {
+        setFriends((friends) => friends.slice(0, friends.length - 1));
+      });
   };
 
   const checkIfFound = () => {

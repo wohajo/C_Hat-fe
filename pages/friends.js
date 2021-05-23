@@ -187,6 +187,8 @@ export default function Friends() {
                   isFound={false}
                   key={fr.id}
                   {...fr}
+                  friends={friends}
+                  setFriends={setFriends}
                   userId={userId}
                   token={token}
                 />

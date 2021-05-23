@@ -1,6 +1,10 @@
 import React from "react";
 import axios from "axios";
-import { decryptString, getFromLocalStorage } from "./service/utlis";
+import {
+  axiosAuthConfig,
+  decryptString,
+  getFromLocalStorage,
+} from "./service/utlis";
 import styles from "../styles/Chat.module.scss";
 
 export default function FriendsList({
@@ -11,6 +15,7 @@ export default function FriendsList({
   setCurrentRecipient,
   setCurrentRecipientId,
   setMessages,
+  setMessagePagination,
 }) {
   const HOST_API = "http://localhost:8081/api/";
 
@@ -24,21 +29,13 @@ export default function FriendsList({
 
   const getMessages = async (userId, friendUsername, token) => {
     await axios
-      .get(`${HOST_API}messages/with/${userId}/1`, {
-        auth: {
-          username: token,
-          password: "x",
-        },
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8",
-          "Access-Control-Allow-Origin": "*",
-        },
-      })
+      .get(`${HOST_API}messages/with/${userId}/1`, axiosAuthConfig(token))
       .then((res) => {
         let msgs = [];
         console.log("setting new messages with get");
         res.data.messages.datas.forEach((msg) => {
           msgs.push({
+            id: msg.id,
             contents: decryptString(
               msg.contents,
               getFromLocalStorage(`${username}secretWith${friendUsername}`)
@@ -66,6 +63,7 @@ export default function FriendsList({
         }
         setCurrentRecipient(() => friend.username);
         setCurrentRecipientId(() => friend.id);
+        setMessagePagination(() => 2);
       }}
     >
       <b>{friend.username}</b>
