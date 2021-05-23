@@ -237,7 +237,11 @@ function ChatWindow() {
 
   return (
     <>
-      <Button disabled={olderMsgsButton} onClick={() => handleOlderMessages()}>
+      <Button
+        variant="dark"
+        disabled={olderMsgsButton}
+        onClick={() => handleOlderMessages()}
+      >
         Load previous messages
       </Button>
       <div className={styles.chatContainer}>
@@ -292,7 +296,7 @@ function ChatWindow() {
           top: 4,
         }}
         show={showToast}
-        delay={3000}
+        delay={15000}
         autohide
         onClose={() => setShowToast(false)}
       >

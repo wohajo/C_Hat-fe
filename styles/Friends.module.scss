@@ -23,19 +23,18 @@
 }
 
 .activeButton {
-  border-bottom: 3px solid darkviolet;
+  border-bottom: 3px solid black;
   font-weight: bold;
 }
 
 .tabButton:hover {
-  border-bottom: 3px solid darkviolet;
+  border-bottom: 3px solid black;
   font-weight: bold;
 }
 
 .tabs {
   grid-area: tabs;
   height: 50vh;
-  // border: 1px solid black;
 }
 
 .tab,
