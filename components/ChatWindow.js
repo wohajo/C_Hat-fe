@@ -3,8 +3,7 @@ import ChatArea from "./ChatArea";
 import MessageForm from "./MessageForm";
 import FriendsList from "./FriendsList";
 import { useRouter } from "next/router";
-import { socket } from "./service/socket";
-import { React, useCallback } from "react";
+import { React, useContext } from "react";
 import { useState, useEffect } from "react";
 import {
   axiosAuthConfig,
@@ -17,8 +16,10 @@ import {
 import styles from "../styles/Chat.module.scss";
 import { getSession, signOut } from "next-auth/client";
 import { Toast } from "react-bootstrap";
+import { SocketContext } from "./service/socket";
 
 function ChatWindow() {
+  const socket = useContext(SocketContext);
   const [token, setToken] = useState("");
   const [username, setUsername] = useState("");
   const [userId, setUserId] = useState(0);
