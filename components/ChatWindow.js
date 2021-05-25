@@ -142,7 +142,6 @@ function ChatWindow() {
     socket.on("room name response", (data) => {
       setRoomsMap((roomsMap) => roomsMap.set(data.recipientId, data.roomName));
     });
-    return () => socket.close();
   }, []);
 
   useEffect(() => {
