@@ -23,8 +23,10 @@ const providers = [
           return { status: "success", data: user.data };
         }
       } catch (error) {
-        if (error.response.status === 401) throw new Error("Unauthorized user");
-        else throw new Error(error.response.data);
+        if (error.response.status === 401) throw new Error("Wrong credentials");
+        if (error.response.status === 500) throw new Error("Server error");
+        if (error.response.status === 503) throw new Error("Connection error");
+        else throw new Error("Something went wrong");
       }
     },
   }),
