@@ -26,7 +26,7 @@ function Friend({
   const handleInvite = () => {
     axios
       .post(`${HOST_API}invites/invite/${id}`, {}, axiosAuthConfig(token))
-      .then(() => showToastWith("Success", "invite was sent", ""))
+      .then(() => showToastWith("Success", "", "Invite was sent"))
       .catch((err) => genericError(err));
   };
 
@@ -35,7 +35,7 @@ function Friend({
       .delete(`${HOST_API}friends/remove/${id}`, axiosAuthConfig(token))
       .then(() => {
         setFriends((friends) => friends.slice(0, friends.length - 1));
-        showToastWith("Success", "invite was deleted", "");
+        showToastWith("Success", "", "Invite was deleted");
       })
       .catch((err) => genericError(err));
   };

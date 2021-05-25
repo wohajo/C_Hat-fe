@@ -16,6 +16,7 @@ export default function FriendsList({
   setCurrentRecipientId,
   setMessages,
   setMessagePagination,
+  genericError,
 }) {
   const HOST_API = "http://localhost:8081/api/";
 
@@ -48,7 +49,7 @@ export default function FriendsList({
 
         setMessages(() => [...msgs]);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => genericError(err));
   };
 
   return friends.map((friend) => (

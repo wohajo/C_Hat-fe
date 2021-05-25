@@ -32,7 +32,7 @@ function ChatWindow() {
   const [currentRecipientId, setCurrentRecipientId] = useState(-1);
   const [showToast, setShowToast] = useState(false);
   const [toastMessasge, setToastMessasge] = useState("");
-  const [toastUsername, setToastUsername] = useState("");
+  const [toastTitle, setToastTitle] = useState("");
   const [toastSmall, setToastSmall] = useState("send You a message");
   const [messagePagination, setMessagePagination] = useState(2);
   const [olderMsgsButton, setOlderMsgsButton] = useState(false);
@@ -95,7 +95,7 @@ function ChatWindow() {
           );
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => genericError(err));
 
     await axios
       .get(`${HOST_API}friends/my`, axiosAuthConfig(resToken))
@@ -122,7 +122,7 @@ function ChatWindow() {
           setFriends((friends) => [...friends, friend]);
         });
       })
-      .catch((err) => console.log(err));
+      .catch((err) => genericError(err));
   }, []);
 
   useEffect(() => {
@@ -151,7 +151,6 @@ function ChatWindow() {
     const message = responses[responses.length - 1];
 
     if (message.roomName === roomsMap.get(currentRecipientId)) {
-      console.log("setting messages from socket");
       setMessages(() => [
         ...messages,
         {
@@ -167,17 +166,41 @@ function ChatWindow() {
       ]);
     } else {
       let friend = friends.find((f) => f.id === message.senderId);
-      console.log(friend);
-      setToastUsername(friend.username);
-      setToastMessasge(
+      showToastWith(
+        friend.username,
+        "send You a message",
         decryptString(
           message.contents,
           getFromLocalStorage(`${username}secretWith${friend.username}`)
         )
       );
-      setShowToast(() => true);
     }
   }, [responses, username]);
+
+  const genericError = (err) => {
+    if (err.response === undefined) {
+      showToastWith("Connection error", "", "No connection to the server");
+      return;
+    }
+    if (err.response.status === 401)
+      showToastWith(
+        "Error",
+        "something went wrong",
+        "Session expired, log in again."
+      );
+    else if (err.response.status === 500)
+      showToastWith("Error", "something went wrong", "Error on our side");
+    else if (err.response.status === 403 || err.response.status === 409)
+      showToastWith("Error", "", err.response.data.message);
+    else showToastWith("Error", "something went wrong", "We will look into it");
+  };
+
+  const showToastWith = (header, smallText, message) => {
+    setToastTitle(() => header);
+    setToastSmall(() => smallText);
+    setToastMessasge(() => message);
+    setShowToast(() => true);
+  };
 
   const joinRoom = (token, username, recipient, recipientId) => {
     socket.emit("join", {
@@ -231,7 +254,7 @@ function ChatWindow() {
         setMessagePagination((messagePagination) => messagePagination + 1);
         if (msgs.length === 0) setOlderMsgsButton(() => true);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => genericError(err));
   };
 
   return (
@@ -267,6 +290,7 @@ function ChatWindow() {
               setCurrentRecipientId={setCurrentRecipientId}
               setMessages={setMessages}
               username={username}
+              genericError={genericError}
             />
           </div>
         </div>
@@ -301,7 +325,7 @@ function ChatWindow() {
         onClose={() => setShowToast(false)}
       >
         <Toast.Header closeButton={false}>
-          <strong className="mr-auto">{toastUsername}</strong>
+          <strong className="mr-auto">{toastTitle}</strong>
           <small style={{ marginLeft: "5px" }}>{toastSmall}</small>
         </Toast.Header>
         <Toast.Body>{truncate(toastMessasge, 80)}</Toast.Body>

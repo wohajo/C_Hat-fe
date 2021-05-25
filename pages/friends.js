@@ -60,14 +60,16 @@ export default function Friends() {
       );
     else if (err.response.status === 500)
       showToastWith("Error", "something went wrong", "Error on our side");
+    else if (err.response.status === 403 || err.response.status === 409)
+      showToastWith("Error", "", err.response.data.message);
     else showToastWith("Error", "something went wrong", "We will look into it");
   };
 
   const showToastWith = (header, smallText, message) => {
-    setShowToast(() => true);
     setToastTitle(() => header);
     setToastSmall(() => smallText);
     setToastMessasge(() => message);
+    setShowToast(() => true);
   };
 
   const checkIfActive = (tabName, elementToCheck) => {
