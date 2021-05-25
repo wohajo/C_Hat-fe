@@ -7,14 +7,14 @@ import { Button, Card } from "react-bootstrap";
 
 function FriendRequest({
   id,
-  status,
   timestamp,
   sender,
   receiver,
   isPending,
   token,
   setFriendsRequests,
-  friendRequests,
+  genericError,
+  showToastWith,
 }) {
   const [username, setUsername] = useState("");
   const [name, setName] = useState("");
@@ -36,12 +36,12 @@ function FriendRequest({
     axios
       .put(`${HOST_API}invites/${action}/${id}`, {}, axiosAuthConfig(token))
       .then((res) => {
-        console.log(res);
-        setFriendsRequests((friendRequests) =>
-          friendRequests.slice(0, friendRequests.length - 1)
-        );
+        setFriendsRequests((friendRequests) => {
+          friendRequests.slice(0, friendRequests.length - 1);
+          showToastWith("Success", "", "action completed sucessfully");
+        });
       })
-      .catch((err) => console.log(err));
+      .catch((err) => genericError(err));
   };
 
   const checkIfPending = () => {

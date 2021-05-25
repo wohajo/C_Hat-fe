@@ -11,10 +11,10 @@ function Friend({
   lastName,
   username,
   isFound,
-  userId,
   token,
-  friends,
   setFriends,
+  genericError,
+  showToastWith,
 }) {
   const [name, setName] = useState("");
   const HOST_API = "http://localhost:8081/api/";
@@ -26,15 +26,18 @@ function Friend({
   const handleInvite = () => {
     axios
       .post(`${HOST_API}invites/invite/${id}`, {}, axiosAuthConfig(token))
-      .then((res) => console.log(res));
+      .then(() => showToastWith("Success", "invite was sent", ""))
+      .catch((err) => genericError(err));
   };
 
   const handleDelete = () => {
     axios
       .delete(`${HOST_API}friends/remove/${id}`, axiosAuthConfig(token))
-      .then((res) => {
+      .then(() => {
         setFriends((friends) => friends.slice(0, friends.length - 1));
-      });
+        showToastWith("Success", "invite was deleted", "");
+      })
+      .catch((err) => genericError(err));
   };
 
   const checkIfFound = () => {

@@ -33,6 +33,7 @@ function ChatWindow() {
   const [showToast, setShowToast] = useState(false);
   const [toastMessasge, setToastMessasge] = useState("");
   const [toastUsername, setToastUsername] = useState("");
+  const [toastSmall, setToastSmall] = useState("send You a message");
   const [messagePagination, setMessagePagination] = useState(2);
   const [olderMsgsButton, setOlderMsgsButton] = useState(false);
 
@@ -301,7 +302,7 @@ function ChatWindow() {
       >
         <Toast.Header closeButton={false}>
           <strong className="mr-auto">{toastUsername}</strong>
-          <small style={{ marginLeft: "5px" }}>send You a message</small>
+          <small style={{ marginLeft: "5px" }}>{toastSmall}</small>
         </Toast.Header>
         <Toast.Body>{truncate(toastMessasge, 80)}</Toast.Body>
       </Toast>
