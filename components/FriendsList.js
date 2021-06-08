@@ -33,7 +33,6 @@ export default function FriendsList({
       .get(`${HOST_API}messages/with/${userId}/1`, axiosAuthConfig(token))
       .then((res) => {
         let msgs = [];
-        console.log("setting new messages with get");
         res.data.messages.datas.forEach((msg) => {
           msgs.push({
             id: msg.id,

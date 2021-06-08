@@ -102,14 +102,9 @@ function ChatWindow() {
         res.data.friends.forEach((friend) => {
           const friendUsername = friend.username;
 
-          console.log(`setting cookie for ${friendUsername}`);
-          console.log(`friends public key: ${friend.publicKey}`);
-
           const friendPublicKey = BigInt(friend.publicKey, 16);
           const myPrivateKey = BigInt(privateKey, 16);
           const sharedSecret = friendPublicKey * myPrivateKey;
-
-          console.log(`sharedSecret with ${friendUsername}: ${sharedSecret}`);
 
           setInLocalStorage(`${friendUsername}`, friend.publicKey);
           setInLocalStorage(
@@ -235,7 +230,6 @@ function ChatWindow() {
       )
       .then((res) => {
         let msgs = [];
-        console.log("loading older messages");
         res.data.messages.datas.forEach((msg) => {
           msgs.push({
             id: msg.id,
