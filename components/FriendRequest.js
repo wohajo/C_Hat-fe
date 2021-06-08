@@ -35,10 +35,10 @@ function FriendRequest({
     axios
       .put(`${HOST_API}invites/${action}/${id}`, {}, axiosAuthConfig(token))
       .then((res) => {
-        setFriendsRequests((friendRequests) => {
-          friendRequests.slice(0, friendRequests.length - 1);
-          showToastWith("Success", "", "action completed sucessfully");
-        });
+        setFriendsRequests((friendRequests) =>
+          friendRequests.slice(0, friendRequests.length - 1)
+        );
+        showToastWith("Sucess", "", "Action completed sucessfully");
       })
       .catch((err) => genericError(err));
   };
