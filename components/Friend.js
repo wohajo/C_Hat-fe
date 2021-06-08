@@ -3,7 +3,7 @@ import styles from "../styles/FriendRequest.module.scss";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Card, Button } from "react-bootstrap";
-import { axiosAuthConfig } from "./service/utlis";
+import { axiosAuthConfig, HOST_API } from "./service/utlis";
 
 function Friend({
   id,
@@ -17,7 +17,6 @@ function Friend({
   showToastWith,
 }) {
   const [name, setName] = useState("");
-  const HOST_API = "http://localhost:8081/api/";
 
   useEffect(() => {
     setName(() => firstName + lastName);

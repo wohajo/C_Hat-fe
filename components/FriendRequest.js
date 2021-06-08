@@ -2,7 +2,7 @@ import React from "react";
 import styles from "../styles/FriendRequest.module.scss";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { axiosAuthConfig } from "./service/utlis";
+import { axiosAuthConfig, HOST_API } from "./service/utlis";
 import { Button, Card } from "react-bootstrap";
 
 function FriendRequest({
@@ -20,7 +20,6 @@ function FriendRequest({
   const [name, setName] = useState("");
   const REJECT = "reject";
   const ACCEPT = "accept";
-  const HOST_API = "http://localhost:8081/api/";
 
   useEffect(() => {
     if (isPending) {

@@ -12,6 +12,7 @@ import {
   isInLocalStorage,
   setInLocalStorage,
   truncate,
+  HOST_API,
 } from "./service/utlis";
 import styles from "../styles/Chat.module.scss";
 import { getSession, signOut } from "next-auth/client";
@@ -36,8 +37,6 @@ function ChatWindow() {
   const [toastSmall, setToastSmall] = useState("send You a message");
   const [messagePagination, setMessagePagination] = useState(2);
   const [olderMsgsButton, setOlderMsgsButton] = useState(false);
-
-  const HOST_API = "http://localhost:8081/api/";
 
   const random = require("random-bigint");
 
@@ -288,6 +287,7 @@ function ChatWindow() {
               setMessagePagination={setMessagePagination}
               setCurrentRecipient={setCurrentRecipient}
               setCurrentRecipientId={setCurrentRecipientId}
+              setOlderMsgsButton={setOlderMsgsButton}
               setMessages={setMessages}
               username={username}
               genericError={genericError}

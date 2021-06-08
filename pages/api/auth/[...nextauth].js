@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import Providers from "next-auth/providers";
 import axios from "axios";
+import { HOST_API } from "../../../components/service/utlis";
 
 const providers = [
   Providers.Credentials({
@@ -17,7 +18,6 @@ const providers = [
       };
 
       try {
-        const HOST_API = "http://localhost:8081/api/";
         const user = await axios.post(`${HOST_API}auth/login`, {}, axiosConfig);
         if (user) {
           return { status: "success", data: user.data };

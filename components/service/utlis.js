@@ -50,4 +50,4 @@ export function getFromLocalStorage(name) {
   return isInLocalStorage(name) ? localStorage.getItem(name) : undefined;
 }
 
-export const HOST_API = process.env.HOST_API;
+export const HOST_API = process.env.NEXT_PUBLIC_APP_HOST_API;

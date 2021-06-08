@@ -6,6 +6,7 @@ import {
   getFromLocalStorage,
 } from "./service/utlis";
 import styles from "../styles/Chat.module.scss";
+import { HOST_API } from "./service/utlis";
 
 export default function FriendsList({
   friends,
@@ -16,10 +17,9 @@ export default function FriendsList({
   setCurrentRecipientId,
   setMessages,
   setMessagePagination,
+  setOlderMsgsButton,
   genericError,
 }) {
-  const HOST_API = "http://localhost:8081/api/";
-
   const checkIfActive = (givenId) => {
     if (givenId === currentRecipientId) {
       return styles.activeDiv;
@@ -65,6 +65,7 @@ export default function FriendsList({
         setCurrentRecipient(() => friend.username);
         setCurrentRecipientId(() => friend.id);
         setMessagePagination(() => 2);
+        setOlderMsgsButton(() => false);
       }}
     >
       <b>{friend.username}</b>

@@ -1,7 +1,7 @@
 import axios from "axios";
+import { HOST_API } from "../../../components/service/utlis";
 
 export default async function userHandler(req, res) {
-  const HOST_API = "http://localhost:8081/api/";
   let axiosConfig = {
     headers: {
       "Content-Type": "application/json;charset=UTF-8",

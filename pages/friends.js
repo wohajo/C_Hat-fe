@@ -8,7 +8,11 @@ import Friend from "../components/Friend";
 import axios from "axios";
 import { Toast } from "react-bootstrap";
 import { InputGroup, Button, FormControl, Form } from "react-bootstrap";
-import { axiosAuthConfig, truncate } from "../components/service/utlis";
+import {
+  axiosAuthConfig,
+  truncate,
+  HOST_API,
+} from "../components/service/utlis";
 
 export default function Friends() {
   const [session, loading] = useSession();
@@ -29,7 +33,6 @@ export default function Friends() {
   const [toastSmall, setToastSmall] = useState("");
 
   const router = useRouter();
-  const HOST_API = "http://localhost:8081/api/";
 
   useEffect(async () => {
     if (!loading && !session?.accessToken) {
