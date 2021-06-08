@@ -27,14 +27,14 @@ export default function Dashobard() {
 
   return (
     <div className={allStyles.container}>
-      <h1>Welcome, {username}!</h1>
+      <h1>Witaj, {username}!</h1>
       <h6
         style={{
           textAlign: "center",
         }}
       >
-        If You see a 🔒, refresh this page - one of You just changed encryption
-        key!
+        Jeśli widzisz 🔒, odśwież stronę - jeden z Was właśnie zmienił klucz
+        szyfrujący!
       </h6>
       <ChatWindow />
     </div>

@@ -35,10 +35,10 @@ function FriendRequest({
     axios
       .put(`${HOST_API}invites/${action}/${id}`, {}, axiosAuthConfig(token))
       .then((res) => {
-        setFriendsRequests((friendRequests) => {
-          friendRequests.slice(0, friendRequests.length - 1);
-          showToastWith("Success", "", "action completed sucessfully");
-        });
+        setFriendsRequests((friendRequests) =>
+          friendRequests.slice(0, friendRequests.length - 1)
+        );
+        showToastWith("Sukces", "", "Akcja powiodła się");
       })
       .catch((err) => genericError(err));
   };
@@ -48,17 +48,17 @@ function FriendRequest({
       return (
         <div>
           <Button variant="dark" onClick={() => handleAction(ACCEPT)}>
-            Accept
+            Akceptuj
           </Button>
           <Button variant="danger" onClick={() => handleAction(REJECT)}>
-            Reject
+            Odrzuć
           </Button>
         </div>
       );
     } else {
       return (
         <div>
-          <p>sent on {new Date(timestamp).toLocaleDateString()}</p>
+          <p>Wysłano {new Date(timestamp).toLocaleDateString()}</p>
         </div>
       );
     }

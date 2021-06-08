@@ -52,20 +52,20 @@ export default function Friends() {
 
   const genericError = (err) => {
     if (err.response === undefined) {
-      showToastWith("Connection error", "", "No connection to the server");
+      showToastWith("Błąd połączenia", "", "Brak połączenia z serwerem");
       return;
     }
     if (err.response.status === 401)
       showToastWith(
-        "Error",
-        "something went wrong",
-        "Session expired, log in again."
+        "Błąd",
+        "coś poszło nie tak",
+        "Sesja wygasła, zaloguj się ponownie."
       );
     else if (err.response.status === 500)
-      showToastWith("Error", "something went wrong", "Error on our side");
+      showToastWith("Błąd", "coś poszło nie tak", "błąd po naszej stronie");
     else if (err.response.status === 403 || err.response.status === 409)
-      showToastWith("Error", "", err.response.data.message);
-    else showToastWith("Error", "something went wrong", "We will look into it");
+      showToastWith("Błąd", "", err.response.data.message);
+    else showToastWith("Błąd", "coś poszło nie tak", "sprawdzimy to");
   };
 
   const showToastWith = (header, smallText, message) => {
@@ -136,34 +136,34 @@ export default function Friends() {
           variant="outline-dark"
           onClick={() => router.push("/dashboard")}
         >
-          Go back
+          Powrót
         </Button>{" "}
-        <h1>Manage friends</h1>
+        <h1>Zarządzaj znajomymi</h1>
         <div className={styles.tabContainer}>
           <div className={styles.tabButtons}>
             <button
               className={checkIfActive("find", "BTN")}
               onClick={handleFind}
             >
-              Find
+              Znajdź
             </button>
             <button
               className={checkIfActive("your", "BTN")}
               onClick={handleMyFriends}
             >
-              Your friends
+              Twoi znajomi
             </button>
             <button
               className={checkIfActive("pending", "BTN")}
               onClick={() => handleInvites("pending")}
             >
-              Pending invites
+              Oczekujące zaproszenia
             </button>
             <button
               className={checkIfActive("sent", "BTN")}
               onClick={() => handleInvites("sent")}
             >
-              Sent invites
+              Wysłane zaproszenia
             </button>
           </div>
           <div className={styles.tabs}>
@@ -177,18 +177,18 @@ export default function Friends() {
               >
                 <InputGroup className="mb-3">
                   <FormControl
-                    placeholder="Find by name"
+                    placeholder="Po imieniu i nazwisku"
                     value={searchNameString}
                     onChange={(e) => setSearchNameString(() => e.target.value)}
                   />
                   <InputGroup.Append>
                     <Button variant="dark" id="send-button" type="submit">
-                      Search
+                      Wyszukaj
                     </Button>
                   </InputGroup.Append>
                 </InputGroup>
               </Form>
-              <p>or</p>
+              <p>lub</p>
               <Form
                 onSubmit={(e) => {
                   e.preventDefault();
@@ -198,7 +198,7 @@ export default function Friends() {
               >
                 <InputGroup className="mb-3">
                   <FormControl
-                    placeholder="Find by username"
+                    placeholder="Po nazwie użytkownika"
                     value={searchUsernameString}
                     onChange={(e) =>
                       setSearchUsernameString(() => e.target.value)
@@ -206,7 +206,7 @@ export default function Friends() {
                   />
                   <InputGroup.Append>
                     <Button variant="dark" id="send-button" type="submit">
-                      Search
+                      Wyszukaj
                     </Button>
                   </InputGroup.Append>
                 </InputGroup>

@@ -162,7 +162,7 @@ function ChatWindow() {
       let friend = friends.find((f) => f.id === message.senderId);
       showToastWith(
         friend.username,
-        "send You a message",
+        "wysłał Ci wiadomość",
         decryptString(
           message.contents,
           getFromLocalStorage(`${username}secretWith${friend.username}`)
@@ -173,20 +173,20 @@ function ChatWindow() {
 
   const genericError = (err) => {
     if (err.response === undefined) {
-      showToastWith("Connection error", "", "No connection to the server");
+      showToastWith("Błąd połączenia", "", "Brak połączenia z serwerem");
       return;
     }
     if (err.response.status === 401)
       showToastWith(
-        "Error",
-        "something went wrong",
-        "Session expired, log in again."
+        "Błąd",
+        "coś poszło nie tak",
+        "Sesja wygasła, zaloguj się ponownie."
       );
     else if (err.response.status === 500)
-      showToastWith("Error", "something went wrong", "Error on our side");
+      showToastWith("Błąd", "coś poszło nie tak", "błąd po naszej stronie");
     else if (err.response.status === 403 || err.response.status === 409)
-      showToastWith("Error", "", err.response.data.message);
-    else showToastWith("Error", "something went wrong", "We will look into it");
+      showToastWith("Błąd", "", err.response.data.message);
+    else showToastWith("Błąd", "coś poszło nie tak", "sprawdzimy to");
   };
 
   const showToastWith = (header, smallText, message) => {
@@ -258,19 +258,19 @@ function ChatWindow() {
         disabled={olderMsgsButton}
         onClick={() => handleOlderMessages()}
       >
-        Load previous messages
+        Załaduj poprzednie wiadomości
       </Button>
       <div className={styles.chatContainer}>
         <div className={styles.sidePanel}>
           <div className={styles.utilityWindow}>
             <div onClick={() => signOutHandler()} className={styles.utilityDiv}>
-              Log out
+              Wyloguj
             </div>
             <div
               onClick={() => router.push("/friends")}
               className={styles.utilityDiv}
             >
-              Friends
+              Znajomi
             </div>
           </div>
           <div className={styles.friendsWindow}>

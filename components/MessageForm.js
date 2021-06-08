@@ -52,7 +52,7 @@ export default function name({
       <InputGroup className="mb-3">
         <FormControl
           disabled={currentRecipientId === -1 ? true : false}
-          placeholder="Message"
+          placeholder="Wiadomość"
           value={messageValue}
           onChange={(e) => {
             setMessageValue(e.target.value);
@@ -65,7 +65,7 @@ export default function name({
             id="send-button"
             type="submit"
           >
-            Send
+            Wyślij
           </Button>
         </InputGroup.Append>
       </InputGroup>
