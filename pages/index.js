@@ -34,14 +34,13 @@ export default function Home() {
       <Head>
         <title>C_Hat</title>
       </Head>
-      <h1>Welcome to C_Hat</h1>{" "}
-      <span className={styles.error}>{loginError}</span>
+      <h1>Witaj w C_Hat</h1> <span className={styles.error}>{loginError}</span>
       <Form onSubmit={(e) => handleLogin(e)} className={styles.credentialsBox}>
         <Form.Group controlId="formBasicUsername">
           <Form.Control
             onChange={(e) => setUsername(e.target.value)}
             type="text"
-            placeholder="Username"
+            placeholder="Nazwa użytkownika"
             required
           />
         </Form.Group>
@@ -50,12 +49,12 @@ export default function Home() {
           <Form.Control
             onChange={(e) => setPassword(e.target.value)}
             type="password"
-            placeholder="Password"
+            placeholder="Hasło"
             required
           />
         </Form.Group>
         <Button variant="dark" type="submit" disabled={hasLoginStarted}>
-          Submit
+          Zaloguj
         </Button>
       </Form>
       <Button
@@ -63,7 +62,7 @@ export default function Home() {
         type="submit"
         onClick={() => router.push("/register")}
       >
-        Need an account? Register here!
+        Potrzebujesz konta? Kliknij tutaj!
       </Button>
     </div>
   );

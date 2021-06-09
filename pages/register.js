@@ -15,14 +15,14 @@ export default function Register() {
 
   const genericError = (err) => {
     if (err.response === undefined || err.response.status === 503) {
-      showToastWith("Connection error", "", "No connection to the server");
+      showToastWith("Błąd połączenia", "", "Brak połączenia z serwerem");
       return;
     }
     if (err.response.status === 401)
       showToastWith(
-        "Error",
-        "something went wrong",
-        "Session expired, log in again."
+        "Błąd",
+        "coś poszło nie tak",
+        "Sesja wygasła, zaloguj się ponownie."
       );
     else if (err.response.status === 500)
       showToastWith("Error", "something went wrong", "Error on our side");
@@ -69,12 +69,12 @@ export default function Register() {
     event.preventDefault();
 
     if (event.target.password.value !== event.target.repeatPassword.value) {
-      showToastWith("Error", "", "Passwords must match");
+      showToastWith("Błąd", "", "Hasła muszą być takie same");
       return;
     }
 
     if (event.target.email.value !== event.target.repeatEmail.value) {
-      showToastWith("Error", "", "Emails must match");
+      showToastWith("Błąd", "", "Emaile muszą być takie same");
       return;
     }
 
@@ -96,7 +96,7 @@ export default function Register() {
     axios
       .post("api/users/register", postData, axiosConfig)
       .then((res) => {
-        showToastWith("Success", "", "Registered sucessfully!");
+        showToastWith("Sukces!", "", "Zarejestrowano!");
       })
       .catch((err) => {
         genericError(err);
@@ -107,16 +107,16 @@ export default function Register() {
     <>
       <div className={allStyles.container}>
         <Head>
-          <title>C_Hat - Register</title>
+          <title>C_Hat - Rejestracja</title>
         </Head>
-        <h1>Register to C_Hat</h1>
+        <h1>Zarejestruj się w C_Hat</h1>
         <Form onSubmit={handleRegister} className={styles.credentialsBox} e>
           <Form.Group>
             <Form.Control
               type="text"
               id="firstName"
               name="firstName"
-              placeholder="First name"
+              placeholder="Imię"
               required
             />
           </Form.Group>
@@ -125,7 +125,7 @@ export default function Register() {
               type="text"
               id="lastName"
               name="lastName"
-              placeholder="Last name"
+              placeholder="Nazwisko"
               required
             />
           </Form.Group>
@@ -134,7 +134,7 @@ export default function Register() {
               type="text"
               id="username"
               name="username"
-              placeholder="Username"
+              placeholder="Nazwa użytkownika"
               required
             />
           </Form.Group>
@@ -143,7 +143,7 @@ export default function Register() {
               type="password"
               id="password"
               name="password"
-              placeholder="Password"
+              placeholder="Hasło"
               required
             />
           </Form.Group>
@@ -152,7 +152,7 @@ export default function Register() {
               type="password"
               id="repeatPassword"
               name="repeatPassword"
-              placeholder="Repeat password"
+              placeholder="Powtórz hasło"
               required
             />
           </Form.Group>
@@ -170,12 +170,12 @@ export default function Register() {
               type="email"
               id="repeatEmail"
               name="repeatEmail"
-              placeholder="Repeat email"
+              placeholder="Powtórz email"
               required
             />
           </Form.Group>
           <Button variant="dark" type="submit">
-            Submit
+            Wyślij
           </Button>
         </Form>
       </div>
