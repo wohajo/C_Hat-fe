@@ -24,10 +24,10 @@ const providers = [
         }
       } catch (error) {
         if (error.response.status === 401)
-          throw new Error("Nieprawidłowe dane logowania");
-        if (error.response.status === 500) throw new Error("Błąd serwera");
-        if (error.response.status === 503) throw new Error("Błąd połączenia");
-        else throw new Error("Coś poszło nie tak");
+          throw new Error("Nieprawidlowe dane logowania");
+        if (error.response.status === 500) throw new Error("Blad serwera");
+        if (error.response.status === 503) throw new Error("Blad polaczenia");
+        else throw new Error("Cos poszlo nie tak");
       }
     },
   }),
