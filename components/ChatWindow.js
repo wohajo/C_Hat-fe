@@ -100,20 +100,22 @@ function ChatWindow() {
       .get(`${HOST_API}friends/my`, axiosAuthConfig(resToken))
       .then((res) => {
         res.data.friends.forEach((friend) => {
-          const friendUsername = friend.username;
+          if (friend.publicKey !== null) {
+            const friendUsername = friend.username;
 
-          const friendPublicKey = BigInt(friend.publicKey, 16);
-          const myPrivateKey = BigInt(privateKey, 16);
-          const sharedSecret = friendPublicKey * myPrivateKey;
+            const friendPublicKey = BigInt(friend.publicKey, 16);
+            const myPrivateKey = BigInt(privateKey, 16);
+            const sharedSecret = friendPublicKey * myPrivateKey;
 
-          setInLocalStorage(`${friendUsername}`, friend.publicKey);
-          setInLocalStorage(
-            `${resUsername}secretWith${friendUsername}`,
-            `0x${sharedSecret.toString(16)}`
-          );
-          joinRoom(resToken, resUsername, friend.username, friend.id);
+            setInLocalStorage(`${friendUsername}`, friend.publicKey);
+            setInLocalStorage(
+              `${resUsername}secretWith${friendUsername}`,
+              `0x${sharedSecret.toString(16)}`
+            );
+            joinRoom(resToken, resUsername, friend.username, friend.id);
 
-          setFriends((friends) => [...friends, friend]);
+            setFriends((friends) => [...friends, friend]);
+          }
         });
       })
       .catch((err) => genericError(err));
